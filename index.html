@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHAT DOES _____ BELIEVE IN?</title>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; }
+  body { background:#fff; color:#1a1a1a; font-family:'Spline Sans Mono',monospace; display:flex; flex-direction:column; height:100vh; }
+
+  /* TOP BAR */
+  .topbar { display:flex; justify-content:space-between; align-items:center; padding:14px 28px 10px; flex-shrink:0; }
+  .topbar-title { font-size:13px; letter-spacing:0.35em; font-weight:500; cursor:pointer; }
+  .topbar-right { display:flex; gap:12px; align-items:center; }
+  .icon-btn { background:none; border:1px solid #999; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#555; padding:5px 12px; transition:all 0.15s; }
+  .icon-btn.active { color:#1a1a1a; border-color:#1a1a1a; }
+  .icon-btn:hover { color:#555; border-color:#555; }
+
+  /* BREADCRUMB */
+  .breadcrumb { padding:0 28px 8px; font-size:10px; letter-spacing:0.12em; color:#777; flex-shrink:0; display:flex; gap:6px; align-items:center; }
+  .breadcrumb span { cursor:pointer; transition:color 0.15s; }
+  .breadcrumb span:hover { color:#888; }
+  .breadcrumb .sep { color:#888; cursor:default; }
+  .breadcrumb .current { color:#1a1a1a; font-weight:600; }
+
+  /* HOME PAGE */
+  .home { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:24px; }
+  .home-subtitle { font-size:13px; letter-spacing:0.2em; color:#666; margin-bottom:32px; text-transform:uppercase; }
+  .specimen-grid { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; }
+  .specimen-card { border:1px solid #eee; padding:20px; width:220px; cursor:pointer; transition:all 0.2s; text-align:center; }
+  .specimen-card:hover { border-color:#1a1a1a; }
+  .specimen-card.disabled { opacity:0.35; cursor:default; pointer-events:none; }
+  .card-name { font-size:14px; letter-spacing:0.2em; font-weight:600; margin-bottom:4px; }
+  .card-arch { font-size:12px; letter-spacing:0.15em; color:#666; margin-bottom:12px; }
+  .card-viewport { width:180px; height:140px; margin:0 auto 12px; }
+  .card-score { font-size:13px; letter-spacing:0.1em; color:#777; }
+
+  /* DETAIL PAGE */
+  .detail { flex:1; display:flex; flex-direction:column; min-height:0; }
+  .detail-header { display:flex; justify-content:space-between; align-items:center; padding:0 28px 8px; flex-shrink:0; }
+  .detail-name { font-size:18px; letter-spacing:0.2em; font-weight:600; }
+  .detail-arch { font-size:13px; letter-spacing:0.15em; color:#666; margin-left:12px; }
+  .crossbreed-btn { background:none; border:1px solid #E91E8C; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#E91E8C; padding:5px 14px; transition:all 0.15s; }
+  .crossbreed-btn:hover { background:#E91E8C; color:#fff; }
+  .style-bar { display:flex; gap:10px; align-items:center; justify-content:flex-start; padding:0 28px 6px; flex-shrink:0; }
+  .style-btn { background:none; border:1px solid #bbb; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#666; padding:4px 12px; transition:all 0.15s; }
+  .style-btn.active { color:#1a1a1a; border-color:#1a1a1a; }
+  .style-btn:hover { color:#666; border-color:#555; }
+  .col-headers { display:flex; justify-content:space-between; padding:0 40px 6px; font-size:10px; letter-spacing:0.2em; font-weight:500; flex-shrink:0; }
+  .triptych { flex:1; position:relative; padding:0 24px; display:flex; flex-direction:column; min-height:0; }
+  .model-wrap { position:absolute; left:50%; top:0; transform:translateX(-50%); width:35%; height:100%; z-index:2; pointer-events:none; }
+  #viewport { width:100%; height:100%; pointer-events:auto; }
+  .rows { flex:1; display:flex; flex-direction:column; justify-content:center; gap:14px; position:relative; z-index:1; }
+  .row-wrap { position:relative; }
+  .row-label { font-size:13px; letter-spacing:0.15em; font-weight:500; margin-bottom:3px; }
+  .strip { display:flex; align-items:center; width:100%; }
+  .panel-group { display:flex; gap:2px; padding:3px; flex-shrink:0; }
+  .cell { width:100px; min-height:65px; padding:6px 6px; display:flex; flex-direction:column; justify-content:center; flex-shrink:0; }
+  .cell-title { font-size:10px; font-weight:600; letter-spacing:0.1em; line-height:1.25; }
+  .cell-desc { font-size:8px; color:#666; margin-top:2px; line-height:1.35; }
+  .cell-void { text-align:center; font-size:20px; color:#888; font-weight:300; line-height:1; }
+  .spacer { flex:1; }
+  #lines-svg { position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+  .divider { height:1px; background:#ddd; flex-shrink:0; margin:0 24px; }
+  .bottom { flex-shrink:0; padding:8px 24px; }
+  .bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .section-label { font-size:10px; letter-spacing:0.2em; color:#666; margin-bottom:4px; font-weight:500; }
+  .manifesto-text { font-size:14px; line-height:1.6; color:#777; }
+  .ledger-row { display:grid; grid-template-columns:1fr 2fr; border-bottom:1px solid #f0f0f0; }
+  .ledger-row.hl { background:#FFF5F5; }
+  .ledger-key { padding:3px 6px; font-size:9px; letter-spacing:0.1em; color:#666; }
+  .ledger-val { padding:3px 6px; font-size:12px; color:#777; }
+  .ledger-row.hl .ledger-key { color:#E91E8C; font-weight:600; }
+  .ledger-row.hl .ledger-val { color:#C41070; font-weight:600; }
+  .footer { flex-shrink:0; padding:5px 24px; display:flex; justify-content:space-between; font-size:9px; letter-spacing:0.15em; color:#888; }
+
+  /* CROSSBREED MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(255,255,255,0.92); z-index:100; display:flex; justify-content:center; align-items:center; }
+  .modal { text-align:center; }
+  .modal-title { font-size:12px; letter-spacing:0.2em; color:#555; margin-bottom:20px; }
+  .modal-cards { display:flex; gap:20px; justify-content:center; }
+  .modal-card { border:1px solid #eee; padding:16px 24px; cursor:pointer; transition:all 0.2s; }
+  .modal-card:hover { border-color:#E91E8C; }
+  .modal-card.disabled { opacity:0.3; cursor:default; border-color:#555; }
+  .modal-card-name { font-size:12px; letter-spacing:0.15em; font-weight:600; margin-bottom:4px; }
+  .modal-card-sub { font-size:13px; color:#666; letter-spacing:0.1em; }
+  .modal-close { margin-top:20px; background:none; border:none; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:12px; color:#777; letter-spacing:0.1em; }
+
+  /* FAMILY TREE OVERLAY */
+  .tree-overlay { position:fixed; inset:0; background:rgba(255,255,255,0.96); z-index:90; display:flex; justify-content:center; align-items:center; }
+  .tree-close { position:absolute; top:20px; right:28px; background:none; border:none; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:12px; color:#555; }
+  .tree-title { position:absolute; top:20px; left:28px; font-size:12px; letter-spacing:0.2em; color:#666; }
+  #tree-svg { width:800px; height:500px; }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js"}}</script>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-title" onclick="goHome()">WHAT DOES _____ BELIEVE IN?</div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="tree-toggle" onclick="toggleTree()">FAMILY TREE</button>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb" id="breadcrumb"></div>
+
+<!-- MAIN CONTENT -->
+<div id="main-content" style="flex:1;display:flex;flex-direction:column;min-height:0"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>TECHNOLOGY DOES NOT KNOW HOW TO PLAN ITS OWN DEATH</span>
+  <span>KELSEY WANG · GSAPP 2026</span>
+</div>
+
+<!-- FAMILY TREE OVERLAY (hidden) -->
+<div class="tree-overlay" id="tree-overlay" style="display:none">
+  <div class="tree-title">CONSTITUTIONAL FAMILY TREE</div>
+  <button class="tree-close" onclick="toggleTree()">CLOSE</button>
+  <svg id="tree-svg" viewBox="0 0 800 500"></svg>
+</div>
+
+<!-- CROSSBREED MODAL (hidden) -->
+<div class="modal-overlay" id="crossbreed-modal" style="display:none">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ═══ NOISE ═══
+function noise3D(x,y,z){const h=n=>{let v=Math.sin(n*127.1+n*311.7)*43758.5453;return v-Math.floor(v);};const ix=Math.floor(x),iy=Math.floor(y),iz=Math.floor(z),fx=x-ix,fy=y-iy,fz=z-iz,ux=fx*fx*(3-2*fx),uy=fy*fy*(3-2*fy),uz=fz*fz*(3-2*fz),lerp=(a,b,t)=>a+t*(b-a);const v000=h(ix+iy*57+iz*113),v100=h(ix+1+iy*57+iz*113),v010=h(ix+(iy+1)*57+iz*113),v110=h(ix+1+(iy+1)*57+iz*113),v001=h(ix+iy*57+(iz+1)*113),v101=h(ix+1+iy*57+(iz+1)*113),v011=h(ix+(iy+1)*57+(iz+1)*113),v111=h(ix+1+(iy+1)*57+(iz+1)*113);return lerp(lerp(lerp(v000,v100,ux),lerp(v010,v110,ux),uy),lerp(lerp(v001,v101,ux),lerp(v011,v111,ux),uy),uz);}
+function fbm(x,y,z,oct=4){let v=0,a=1,f=1,t=0;for(let i=0;i<oct;i++){v+=a*noise3D(x*f,y*f,z*f);t+=a;a*=0.5;f*=2;}return v/t;}
+function displaceGeo(geo,scale,freq,seed=0){const pos=geo.attributes.position;for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i),len=Math.sqrt(x*x+y*y+z*z);if(len>0.01){const n=fbm(x*freq+seed,y*freq+seed*0.7,z*freq+seed*1.3);const f=1+(n-0.5)*scale;pos.setXYZ(i,x*f,y*f,z*f);}}pos.needsUpdate=true;geo.computeVertexNormals();}
+
+// ═══ THEMES ═══
+const THEMES = {
+  constitutional: { name:'CONSTITUTIONAL', flow:0xE91E8C, flowLt:0xF54DAA, flowDk:0xC41070, agent:0x33DD33, agentLt:0x66EE66, agentDk:0x22AA22, time:0xFFB830, timeLt:0xFFCC55, timeDk:0xCC8800, base:0xAAAAAA, baseLt:0xCCCCCC, baseDk:0x888888, bg:0xffffff, envelope:0.78, envSat:0.15 },
+  monochrome: { name:'MONOCHROME', flow:0x777777, flowLt:0x999999, flowDk:0x555555, agent:0x666666, agentLt:0x888888, agentDk:0x444444, time:0x999999, timeLt:0xAAAAAA, timeDk:0x777777, base:0xBBBBBB, baseLt:0xDDDDDD, baseDk:0x999999, bg:0xffffff, envelope:0.85, envSat:0.0 }
+};
+let currentTheme = THEMES.constitutional;
+
+// ═══ MATERIALS (theme-aware) ═══
+const MM={flow:o=>Object.assign({color:currentTheme.flow,roughness:0.3,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide},o||{}),flowLt:o=>Object.assign({color:currentTheme.flowLt,roughness:0.25,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide},o||{}),flowDk:o=>Object.assign({color:currentTheme.flowDk,roughness:0.35,transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide},o||{}),agent:o=>Object.assign({color:currentTheme.agent,roughness:0.3,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide},o||{}),agentLt:o=>Object.assign({color:currentTheme.agentLt,roughness:0.25,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide},o||{}),agentDk:o=>Object.assign({color:currentTheme.agentDk,roughness:0.35,transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide},o||{}),time:o=>Object.assign({color:currentTheme.time,roughness:0.3,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide},o||{}),timeLt:o=>Object.assign({color:currentTheme.timeLt,roughness:0.25,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide},o||{}),timeDk:o=>Object.assign({color:currentTheme.timeDk,roughness:0.35,transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide},o||{}),base:o=>Object.assign({color:currentTheme.base,roughness:0.4,transparent:true,opacity:0.2,depthWrite:false,side:THREE.DoubleSide},o||{}),baseLt:o=>Object.assign({color:currentTheme.baseLt,roughness:0.35,transparent:true,opacity:0.15,depthWrite:false,side:THREE.DoubleSide},o||{}),baseDk:o=>Object.assign({color:currentTheme.baseDk,roughness:0.45,transparent:true,opacity:0.25,depthWrite:false,side:THREE.DoubleSide},o||{})};
+function mt(p,o){return new THREE.MeshStandardMaterial(MM[p](o));}
+function R(s){let v=s;return()=>{v=(v*16807)%2147483647;return v/2147483647;};}
+function bx(g,m,x,y,z,w,h,d){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+function wf(g,geo,x,y,z){const e=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:0xDDDDDD,transparent:true,opacity:0.3}));e.position.set(x,y,z);g.add(e);}
+
+// ═══ GENERATORS ═══
+function pearDeform(geo, elongate, taper) {
+  const pos = geo.attributes.position;
+  let minY = Infinity, maxY = -Infinity;
+  for (let i = 0; i < pos.count; i++) { minY = Math.min(minY, pos.getY(i)); maxY = Math.max(maxY, pos.getY(i)); }
+  const range = maxY - minY || 1;
+  for (let i = 0; i < pos.count; i++) {
+    let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+    const t = (y - minY) / range; // 0=bottom, 1=top
+    // Pear profile: wide at ~60% height, narrow at top and tapered at bottom
+    const profile = Math.sin(t * Math.PI * 0.85 + 0.2) * (0.7 + 0.5 * t) * (1 - (1 - t) * taper * 0.4);
+    const xzScale = 0.5 + profile * 0.7;
+    pos.setXYZ(i, x * xzScale, y * elongate, z * xzScale);
+  }
+  pos.needsUpdate = true; geo.computeVertexNormals();
+}
+
+function genWaspNest(g){const r=R(42);for(let l=0;l<22;l++){const rad=3.8+l*0.15,geo=new THREE.SphereGeometry(rad,48,36,0,Math.PI*2,0.08,Math.PI*0.72);displaceGeo(geo,0.12+l*0.008,1.2+l*0.15,l*3.7);const pos=geo.attributes.position;for(let i=0;i<pos.count;i++){const y=pos.getY(i);if(y<-rad*0.5){const tn=fbm(pos.getX(i)*2+l,y*2,pos.getZ(i)*2+l*0.5);pos.setY(i,y-((-y/rad)-0.5)*0.4*tn*rad*0.3);}}pos.needsUpdate=true;geo.computeVertexNormals();pearDeform(geo, 1.4, 0.6);const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({opacity:0.04+Math.random()*0.03,color:new THREE.Color().setHSL(0.1,currentTheme.envSat,currentTheme.envelope+l*0.004),transparent:true,depthWrite:false,side:THREE.DoubleSide,roughness:0.7}));m.position.y=-2;g.add(m);}const cG=new THREE.CylinderGeometry(0.22,0.22,0.35,6,1,true),cpG=new THREE.CylinderGeometry(0.20,0.20,0.04,6);[{y:0,oR:2.5},{y:-2.2,oR:3.0},{y:-4.2,oR:3.3},{y:-6,oR:2.6},{y:-7.6,oR:1.8},{y:-8.8,oR:1.0}].forEach((c,ci)=>{const cg=new THREE.Group();cg.position.y=c.y;const dG=new THREE.CylinderGeometry(c.oR,c.oR*1.03,0.08,48);displaceGeo(dG,0.08,2,ci*5);const dm=new THREE.Mesh(dG,mt('flowDk',{opacity:0.4}));dm.position.y=-0.2;cg.add(dm);const cs=0.42;for(let q=-Math.ceil(c.oR/cs)-1;q<=Math.ceil(c.oR/cs)+1;q++)for(let rr=-Math.ceil(c.oR/cs)-1;rr<=Math.ceil(c.oR/cs)+1;rr++){if(Math.abs(q+rr)>Math.ceil(c.oR/cs)+1)continue;const x=q*cs*0.87+rr*cs*0.435,z=rr*cs*0.755,d=Math.sqrt(x*x+z*z),bn=fbm(x*0.8+ci*10,z*0.8,ci*3);if(d>c.oR*(0.85+bn*0.2))continue;const cl=new THREE.Mesh(cG,mt(r()>0.6?'flow':'flowDk',{opacity:r()>0.6?0.45:0.4}));cl.position.set(x,0,z);cg.add(cl);if(r()>0.55){const cp=new THREE.Mesh(cpG,mt('time',{opacity:0.5}));cp.position.set(x,0.19,z);cg.add(cp);}}if(ci>0)for(let p=0;p<(ci<3?4:ci<5?3:2);p++){const a=(p/(ci<3?4:ci<5?3:2))*Math.PI*2+r()*0.8,pd=r()*c.oR*0.4,px=Math.cos(a)*pd,pz=Math.sin(a)*pd,gap=[0,-2.2,-4.2,-6,-7.6,-8.8][ci-1]-c.y;const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(px,0,pz),new THREE.Vector3(px+(r()-0.5)*0.3,gap*0.5,pz+(r()-0.5)*0.3),new THREE.Vector3(px+(r()-0.5)*0.2,gap,pz+(r()-0.5)*0.2)]);cg.add(new THREE.Mesh(new THREE.TubeGeometry(curve,8,0.04+r()*0.03,6,false),mt('agent',{opacity:0.45})));}g.add(cg);});const ac=new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0),new THREE.Vector3(0.1,1.5,0.05),new THREE.Vector3(-0.05,3.2,0)]);g.add(new THREE.Mesh(new THREE.TubeGeometry(ac,12,0.1,8,false),mt('agentDk',{opacity:0.5})));const pG=new THREE.CylinderGeometry(0.6,0.4,0.12,16);displaceGeo(pG,0.15,3,99);const pl=new THREE.Mesh(pG,mt('agentDk',{opacity:0.4}));pl.position.y=3.3;g.add(pl);g.position.y=2;}
+
+// ═══ WASP NEST LIFECYCLE — time-scrubbed construction and death ═══
+let lifecycleT = 0.6;
+let lifecycleMeshes = [];
+let animatedWasps = [];
+
+function ss(e0,e1,x){const t=Math.max(0,Math.min(1,(x-e0)/(e1-e0)));return t*t*(3-2*t);}
+
+function genLifecycle(g) {
+  const r = R(42);
+  lifecycleMeshes = [];
+  const tag = (mesh, appear, peak, fade, gone) => {
+    mesh.userData.lc = { appear, peak, fade, gone };
+    lifecycleMeshes.push(mesh);
+    return mesh;
+  };
+
+  // ── BRANCH (anchor surface) ──
+  const branch = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.15, 0.2, 8, 8),
+    mt('base', { opacity: 0.3 })
+  );
+  branch.rotation.z = Math.PI / 2;
+  branch.position.y = 5;
+  g.add(tag(branch, 0, 0, 0.82, 0.95));
+
+  // Small branches
+  for (let i = 0; i < 5; i++) {
+    const sb = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.03, 0.06, 1 + r() * 1.5, 5),
+      mt('base', { opacity: 0.25 })
+    );
+    sb.position.set(-3 + i * 1.5, 5, 0);
+    sb.rotation.z = Math.PI / 2 + (r() - 0.5) * 0.8;
+    g.add(tag(sb, 0, 0, 0.82, 0.95));
+  }
+
+  // ── RAW MATERIALS — leaves, bark strips, wood fiber ──
+  for (let i = 0; i < 20; i++) {
+    const a = r() * Math.PI * 2, d = 2 + r() * 4;
+    // Leaf shapes — flat irregular quads
+    const leafW = 0.15 + r() * 0.25, leafH = 0.2 + r() * 0.3;
+    const leafGeo = new THREE.PlaneGeometry(leafW, leafH, 3, 3);
+    // Curl the leaf
+    const lpos = leafGeo.attributes.position;
+    for (let v = 0; v < lpos.count; v++) {
+      const lx = lpos.getX(v), ly = lpos.getY(v);
+      lpos.setZ(v, Math.sin(lx * 4) * 0.03 + Math.sin(ly * 3) * 0.02);
+    }
+    lpos.needsUpdate = true; leafGeo.computeVertexNormals();
+    const leaf = new THREE.Mesh(leafGeo, mt('flow', { opacity: 0.35 }));
+    leaf.position.set(Math.cos(a) * d, 4 + r() * 2, Math.sin(a) * d);
+    leaf.rotation.set(r() * Math.PI, r() * Math.PI, r() * Math.PI);
+    g.add(tag(leaf, 0, 0.03, 0.06, 0.22));
+  }
+  // Bark strips
+  for (let i = 0; i < 15; i++) {
+    const a = r() * Math.PI * 2, d = 1.5 + r() * 3;
+    const strip = new THREE.Mesh(
+      new THREE.BoxGeometry(0.04, 0.02, 0.2 + r() * 0.3),
+      mt('flowDk', { opacity: 0.3 })
+    );
+    strip.position.set(Math.cos(a) * d, 4.2 + r() * 1.5, Math.sin(a) * d);
+    strip.rotation.set(r(), r(), r());
+    g.add(tag(strip, 0, 0.04, 0.07, 0.2));
+  }
+
+  // ── ANIMATED WASPS — orbit the nest, carry materials ──
+  animatedWasps = [];
+  for (let i = 0; i < 25; i++) {
+    const wasp = new THREE.Group();
+    // Body — striped cone
+    const body = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 5), mt('agent', { opacity: 0.7 }));
+    body.rotation.x = Math.PI / 2;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.035, 5, 4), mt('agentDk', { opacity: 0.7 }));
+    head.position.z = 0.1;
+    // Wings (two)
+    const wingL = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.04), mt('agentLt', { opacity: 0.25 }));
+    wingL.position.set(0.06, 0.02, 0.02);
+    wingL.rotation.z = 0.2;
+    const wingR = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.04), mt('agentLt', { opacity: 0.25 }));
+    wingR.position.set(-0.06, 0.02, 0.02);
+    wingR.rotation.z = -0.2;
+    wasp.add(body, head, wingL, wingR);
+
+    // Some wasps carry material
+    if (i < 8) {
+      const cargo = new THREE.Mesh(
+        new THREE.SphereGeometry(0.025, 4, 3),
+        mt('flow', { opacity: 0.5 })
+      );
+      cargo.position.z = -0.08;
+      wasp.add(cargo);
+    }
+
+    // Orbit parameters
+    const orbitRadius = 1.5 + r() * 4;
+    const orbitHeight = -1 + r() * 6;
+    const orbitSpeed = 0.3 + r() * 0.8;
+    const orbitPhase = r() * Math.PI * 2;
+    const orbitTilt = (r() - 0.5) * 0.4;
+    const bobSpeed = 1 + r() * 2;
+    const bobAmount = 0.2 + r() * 0.5;
+
+    wasp.position.set(orbitRadius, orbitHeight, 0);
+    g.add(tag(wasp, 0.06, 0.25, 0.72, 0.83));
+
+    animatedWasps.push({
+      mesh: wasp,
+      orbit: { radius: orbitRadius, height: orbitHeight, speed: orbitSpeed, phase: orbitPhase, tilt: orbitTilt, bobSpeed, bobAmount }
+    });
+  }
+
+  // ── ANCHOR STALK (agent — grows from 0.12 to 0.25) ──
+  const ac = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.1, 1.5, 0.05), new THREE.Vector3(-0.05, 3.2, 0)
+  ]);
+  const anchorMesh = new THREE.Mesh(new THREE.TubeGeometry(ac, 12, 0.1, 8, false), mt('agentDk', { opacity: 0.5 }));
+  g.add(tag(anchorMesh, 0.12, 0.3, 0.82, 0.88));
+
+  const plateGeo = new THREE.CylinderGeometry(0.6, 0.4, 0.12, 16);
+  displaceGeo(plateGeo, 0.15, 3, 99);
+  const plate = new THREE.Mesh(plateGeo, mt('agentDk', { opacity: 0.4 }));
+  plate.position.y = 3.3;
+  g.add(tag(plate, 0.12, 0.3, 0.82, 0.88));
+
+  // ── COMBS + CELLS (flow — built progressively) ──
+  const cellGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.35, 6, 1, true);
+  const capGeo = new THREE.CylinderGeometry(0.20, 0.20, 0.04, 6);
+  const combs = [{y:0,oR:2.5,t:0.18},{y:-2.2,oR:3.0,t:0.28},{y:-4.2,oR:3.3,t:0.35},{y:-6,oR:2.6,t:0.42},{y:-7.6,oR:1.8,t:0.48},{y:-8.8,oR:1.0,t:0.54}];
+
+  combs.forEach((c, ci) => {
+    const combAppear = c.t;
+    const cg = new THREE.Group();
+    cg.position.y = c.y;
+
+    // Disc
+    const dG = new THREE.CylinderGeometry(c.oR, c.oR * 1.03, 0.08, 48);
+    displaceGeo(dG, 0.08, 2, ci * 5);
+    const dm = new THREE.Mesh(dG, mt('flowDk', { opacity: 0.4 }));
+    dm.position.y = -0.2;
+    cg.add(tag(dm, combAppear, combAppear + 0.08, 0.85, 0.95));
+
+    // Cells
+    const cs = 0.42;
+    let cellIdx = 0;
+    for (let q = -Math.ceil(c.oR / cs) - 1; q <= Math.ceil(c.oR / cs) + 1; q++) {
+      for (let rr = -Math.ceil(c.oR / cs) - 1; rr <= Math.ceil(c.oR / cs) + 1; rr++) {
+        if (Math.abs(q + rr) > Math.ceil(c.oR / cs) + 1) continue;
+        const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
+        const dist = Math.sqrt(x * x + z * z);
+        const bn = fbm(x * 0.8 + ci * 10, z * 0.8, ci * 3);
+        if (dist > c.oR * (0.85 + bn * 0.2)) continue;
+
+        // Each cell appears slightly after the previous (ripple effect)
+        const cellDelay = combAppear + (dist / c.oR) * 0.06;
+        const cl = new THREE.Mesh(cellGeo, mt(r() > 0.6 ? 'flow' : 'flowDk', { opacity: 0.45 }));
+        cl.position.set(x, 0, z);
+        cg.add(tag(cl, cellDelay, cellDelay + 0.05, 0.85, 0.92 + r() * 0.06));
+
+        // Brood caps (TIME — appear later, disappear first in decline)
+        if (r() > 0.55) {
+          const cp = new THREE.Mesh(capGeo, mt('time', { opacity: 0.5 }));
+          cp.position.set(x, 0.19, z);
+          cg.add(tag(cp, cellDelay + 0.1, cellDelay + 0.15, 0.7, 0.78));
+        }
+        cellIdx++;
+      }
+    }
+
+    // Petioles (agent)
+    if (ci > 0) {
+      for (let p = 0; p < (ci < 3 ? 4 : ci < 5 ? 3 : 2); p++) {
+        const a = (p / (ci < 3 ? 4 : ci < 5 ? 3 : 2)) * Math.PI * 2 + r() * 0.8;
+        const pd = r() * c.oR * 0.4, px = Math.cos(a) * pd, pz = Math.sin(a) * pd;
+        const gap = combs[ci - 1].y - c.y;
+        const curve = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(px, 0, pz),
+          new THREE.Vector3(px + (r() - 0.5) * 0.3, gap * 0.5, pz + (r() - 0.5) * 0.3),
+          new THREE.Vector3(px + (r() - 0.5) * 0.2, gap, pz + (r() - 0.5) * 0.2)
+        ]);
+        const pet = new THREE.Mesh(new THREE.TubeGeometry(curve, 8, 0.04 + r() * 0.03, 6, false), mt('agent', { opacity: 0.45 }));
+        cg.add(tag(pet, combAppear - 0.02, combAppear + 0.05, 0.84, 0.92));
+      }
+    }
+
+    g.add(cg);
+  });
+
+  // ── ENVELOPE LAYERS (time — grow around, dissolve at death) ──
+  for (let l = 0; l < 22; l++) {
+    const rad = 3.8 + l * 0.15;
+    const geo = new THREE.SphereGeometry(rad, 48, 36, 0, Math.PI * 2, 0.08, Math.PI * 0.72);
+    displaceGeo(geo, 0.12 + l * 0.008, 1.2 + l * 0.15, l * 3.7);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      if (y < -rad * 0.5) {
+        const tn = fbm(pos.getX(i) * 2 + l, y * 2, pos.getZ(i) * 2 + l * 0.5);
+        pos.setY(i, y - ((-y / rad) - 0.5) * 0.4 * tn * rad * 0.3);
+      }
+    }
+    pos.needsUpdate = true; geo.computeVertexNormals();
+    pearDeform(geo, 1.4, 0.6);
+    const envAppear = 0.22 + l * 0.015;
+    const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+      opacity: 0.04 + Math.random() * 0.03,
+      color: new THREE.Color().setHSL(0.1, currentTheme.envSat, currentTheme.envelope + l * 0.004),
+      transparent: true, depthWrite: false, side: THREE.DoubleSide, roughness: 0.7
+    }));
+    m.position.y = -2;
+    g.add(tag(m, envAppear, envAppear + 0.1, 0.82 - l * 0.005, 0.92 - l * 0.003));
+  }
+
+  // ── DECOMPOSITION FRAGMENTS (appear at death) ──
+  for (let i = 0; i < 40; i++) {
+    const a = r() * Math.PI * 2, d = r() * 5;
+    const sz = 0.05 + r() * 0.15;
+    const frag = new THREE.Mesh(
+      new THREE.BoxGeometry(sz, sz * 0.3, sz),
+      mt(r() > 0.5 ? 'time' : 'flow', { opacity: 0.2 })
+    );
+    frag.position.set(Math.cos(a) * d, -8 - r() * 2, Math.sin(a) * d);
+    frag.rotation.set(r(), r(), r());
+    g.add(tag(frag, 0.88, 0.93, 0.97, 1.0));
+  }
+
+  g.position.y = 2;
+
+  // Apply initial lifecycle state
+  updateLifecycle(lifecycleT);
+}
+
+function updateLifecycle(t) {
+  lifecycleT = t;
+
+  // ── FALL DEFORMATION (t > 0.82) ──
+  // Tilt, drop, and squash the whole model
+  if (modelGroup.children[0]) {
+    // Find the main content group (last child added is the nest content)
+    // Apply deformation to all children
+    const fallProgress = ss(0.82, 0.92, t);
+    const meltProgress = ss(0.90, 1.0, t);
+
+    modelGroup.traverse(ch => {
+      if (ch === modelGroup) return;
+      // Only apply fall to non-decomposition elements
+      if (ch.userData.lc && ch.userData.lc.appear < 0.85) {
+        // Skip — handled by group transform below
+      }
+    });
+
+    // Apply fall rotation and position to the model group's first-level children
+    // Use a subtle tilt + drop
+    const nestTilt = fallProgress * 0.4;
+    const nestDrop = fallProgress * 6;
+    const nestSquash = 1 - meltProgress * 0.5;
+
+    // We modify a wrapper approach - move the whole group
+    // Since modelGroup rotates, apply y offset
+    modelGroup.position.y = -nestDrop;
+    modelGroup.children.forEach(ch => {
+      if (ch.userData.lc && ch.userData.lc.appear < 0.85) {
+        // These are the nest elements — apply tilt
+        // Can't easily rotate individual pieces, so just use position offset
+      }
+    });
+  }
+
+  // ── UPDATE ELEMENT VISIBILITY ──
+  lifecycleMeshes.forEach(mesh => {
+    const lc = mesh.userData.lc;
+    if (!lc) return;
+
+    let opacity = 0;
+    if (t < lc.appear) {
+      opacity = 0;
+    } else if (t < lc.peak) {
+      opacity = ss(lc.appear, lc.peak, t);
+    } else if (t < lc.fade) {
+      opacity = 1;
+    } else if (t < lc.gone) {
+      opacity = 1 - ss(lc.fade, lc.gone, t);
+    } else {
+      opacity = 0;
+    }
+
+    mesh.visible = opacity > 0.01;
+
+    // Handle different material types
+    const mat = mesh.material;
+    if (mat) {
+      if (!mat.userData) mat.userData = {};
+      if (mat.userData.baseOp === undefined) mat.userData.baseOp = mat.opacity !== undefined ? mat.opacity : 1;
+
+      if (mat.isLineBasicMaterial || mat.isPointsMaterial) {
+        mat.opacity = mat.userData.baseOp * opacity;
+        mat.transparent = true;
+      } else if (mat.opacity !== undefined) {
+        mat.opacity = mat.userData.baseOp * opacity;
+      }
+    }
+
+    // For groups (wasps), apply to children
+    if (mesh.children) {
+      mesh.children.forEach(ch => {
+        ch.visible = opacity > 0.01;
+        if (ch.material) {
+          if (!ch.material.userData) ch.material.userData = {};
+          if (ch.material.userData.baseOp === undefined) ch.material.userData.baseOp = ch.material.opacity !== undefined ? ch.material.opacity : 1;
+          ch.material.opacity = ch.material.userData.baseOp * opacity;
+          if (ch.material.transparent === undefined) ch.material.transparent = true;
+        }
+      });
+    }
+  });
+}
+
+function genH100(g){const r=R(55);bx(g,mt('base'),0,0,0,10,0.18,6);for(let i=0;i<24;i++)bx(g,mt('flowLt'),-4.5+i*0.38,0.1,(r()-0.5)*4.5,0.03,0.01,0.8+r()*4);bx(g,mt('baseLt'),0,0.2,0,5.5,0.22,4.2);wf(g,new THREE.BoxGeometry(5.6,0.24,4.3),0,0.2,0);bx(g,mt('agentDk'),0,0.36,0,3.8,0.1,2.8);const bks=['agent','agentLt','agentDk'];for(let x=0;x<14;x++)for(let z=0;z<10;z++){const bxx=-1.75+x*0.26,bz=-1.15+z*0.26;if(Math.abs(bxx)>1.8||Math.abs(bz)>1.3)continue;bx(g,mt(bks[(x+z)%3]),bxx,0.43,bz,0.22,0.035,0.22);}for(let i=0;i<5;i++)bx(g,mt('agentLt'),0,0.45,-1.1+i*0.55,3.5,0.02,0.06);[[-2.2,0,-1.2],[-2.2,0,0],[-2.2,0,1.2],[2.2,0,-1.2],[2.2,0,0],[2.2,0,1.2]].forEach(([hx,,hz])=>{bx(g,mt('flowDk'),hx,0.35,hz,0.7,0.08,0.7);for(let l=0;l<8;l++)bx(g,mt(l%2===0?'flow':'flowLt'),hx,0.42+l*0.04,hz,0.65,0.03,0.65);});for(let i=0;i<14;i++){bx(g,mt('flowDk'),-4.5+i*0.32,0.17,2.5,0.26,0.15,0.18);bx(g,mt('flowDk'),-4.5+i*0.32,0.17,-2.5,0.26,0.15,0.18);}for(let i=0;i<40;i++)bx(g,mt('flow'),-4+(i%20)*0.4,0.14,1.9*(i<20?1:-1),0.05,0.08,0.05);const rg=new THREE.Group();rg.position.set(0,0,-8);[[-1.75,0,-1.25],[-1.75,0,1.25],[1.75,0,-1.25],[1.75,0,1.25]].forEach(([rx,,rz])=>bx(rg,mt('agentDk'),rx,4,rz,0.08,8,0.08));for(let u=0;u<21;u++){bx(rg,mt('agent'),0,0.25+u*0.36,0,3.3,0.28,2.2);bx(rg,mt('agentDk'),0,0.25+u*0.36,-1.12,3.1,0.23,0.03);}g.add(rg);wf(g,new THREE.BoxGeometry(18,10,16),0,4,-6);const dcG=new THREE.Mesh(new THREE.BoxGeometry(18,10,16),new THREE.MeshStandardMaterial({color:0xEEEEEE,roughness:0.9,transparent:true,opacity:0.06,depthWrite:false,side:THREE.DoubleSide}));dcG.position.set(0,4,-6);g.add(dcG);for(let i=0;i<5;i++){const p=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,16,8),mt('flow'));p.rotation.x=Math.PI/2;p.position.set(-6+i*3,8,-6);g.add(p);}g.position.y=-1;}
+
+function genManhattan(g){const r=R(77);bx(g,mt('base'),0,0,0,18,0.06,18);for(let i=-4;i<=4;i++){bx(g,mt('baseDk',{opacity:0.12}),i*1.95,0.04,0,0.35,0.01,18);bx(g,mt('baseDk',{opacity:0.1}),0,0.04,i*1.95,18,0.01,0.25);}const bm=['agent','agentLt','agentDk'];for(let bxx=-4;bxx<=4;bxx++)for(let bz=-4;bz<=4;bz++){const x=bxx*1.95,z=bz*1.95;for(let b=0;b<1+Math.floor(r()*3);b++){const w=0.2+r()*0.7,d=0.2+r()*0.7;let h=0.3+r()*3.5;if(r()>0.88)h=4+r()*6;bx(g,mt(bm[Math.floor(r()*bm.length)]),x+(r()-0.5)*0.7,h/2,z+(r()-0.5)*0.7,w,h,d);if(h>4&&r()>0.3)bx(g,mt(bm[Math.floor(r()*bm.length)]),x+(r()-0.5)*0.5,h+h*0.18,z+(r()-0.5)*0.5,w*0.55,h*0.35,d*0.55);}}bx(g,mt('timeDk'),0,-0.5,0,17,0.4,17);for(let i=-2;i<=2;i++){const t=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,17,8),mt('flow'));t.rotation.z=Math.PI/2;t.position.set(0,-0.8,i*3.5);g.add(t);}g.position.y=-0.5;}
+
+// ═══ H100 × WASP NEST — CONSTITUTIONAL TRANSPLANT ═══
+function genHybrid(g) {
+  const r = R(73);
+  const cellGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.35, 6, 1, true);
+  const capGeo = new THREE.CylinderGeometry(0.19, 0.19, 0.04, 6);
+
+  // ── ANCHOR STALK — site attachment (agent) ──
+  const anchorCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.1, 2, 0.06), new THREE.Vector3(-0.04, 4, 0)
+  ]);
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(anchorCurve, 12, 0.1, 8, false), mt('agentDk', { opacity: 0.5 })));
+  const plateGeo = new THREE.CylinderGeometry(0.8, 0.5, 0.1, 6);
+  displaceGeo(plateGeo, 0.1, 3, 88);
+  g.add(new THREE.Mesh(plateGeo, mt('agentDk', { opacity: 0.4 }))).position.y = 4.1;
+
+  // ── HEXAGONAL SUBSTRATE — the "PCB" is a hex disc (flow) ──
+  const subGeo = new THREE.CylinderGeometry(4.5, 4.8, 0.1, 6);
+  displaceGeo(subGeo, 0.04, 1.5, 42);
+  g.add(new THREE.Mesh(subGeo, mt('flow', { opacity: 0.25 }))).position.y = -0.05;
+
+  // ── CENTRAL COMB — the "die" / processor (agent — decisions happen here) ──
+  const dieComb = new THREE.Group();
+  const dieDiscGeo = new THREE.CylinderGeometry(2.2, 2.3, 0.07, 6);
+  displaceGeo(dieDiscGeo, 0.05, 2, 33);
+  dieComb.add(new THREE.Mesh(dieDiscGeo, mt('agentDk', { opacity: 0.3 }))).position.y = -0.18;
+  const cs = 0.42;
+  for (let q = -6; q <= 6; q++) for (let rr = -6; rr <= 6; rr++) {
+    if (Math.abs(q + rr) > 6) continue;
+    const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
+    const dist = Math.sqrt(x * x + z * z);
+    const bn = fbm(x * 0.8 + 10, z * 0.8, 3);
+    if (dist > 2.0 * (0.85 + bn * 0.2)) continue;
+    const cell = new THREE.Mesh(cellGeo, mt(r() > 0.5 ? 'agent' : 'agentLt', { opacity: 0.4 }));
+    cell.position.set(x, 0, z); cell.rotation.y = r() * 0.1;
+    dieComb.add(cell);
+    if (r() > 0.4) {
+      const cap = new THREE.Mesh(capGeo, mt('time', { opacity: 0.5 }));
+      cap.position.set(x, 0.19, z); dieComb.add(cap);
+    }
+  }
+  g.add(dieComb);
+
+  // ── 6 SATELLITE COMBS — the "HBM" memory in hexagonal ring (flow) ──
+  for (let hi = 0; hi < 6; hi++) {
+    const ha = (hi / 6) * Math.PI * 2;
+    const hx = Math.cos(ha) * 3.2, hz = Math.sin(ha) * 3.2;
+    const memComb = new THREE.Group();
+    memComb.position.set(hx, 0, hz);
+    // Disc
+    const mDiscGeo = new THREE.CylinderGeometry(0.9, 0.95, 0.06, 6);
+    displaceGeo(mDiscGeo, 0.05, 2, hi * 11);
+    memComb.add(new THREE.Mesh(mDiscGeo, mt('flowDk', { opacity: 0.3 }))).position.y = -0.15;
+    // Memory cells — stacked 8 layers tall (like HBM)
+    for (let layer = 0; layer < 8; layer++) {
+      for (let q2 = -2; q2 <= 2; q2++) for (let rr2 = -2; rr2 <= 2; rr2++) {
+        if (Math.abs(q2 + rr2) > 2) continue;
+        const mx = q2 * 0.32 + rr2 * 0.16, mz = rr2 * 0.28;
+        if (Math.sqrt(mx * mx + mz * mz) > 0.75) continue;
+        const mCell = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.1, 0.1, 0.035, 6),
+          mt(layer % 2 === 0 ? 'flow' : 'flowLt', { opacity: 0.4 })
+        );
+        mCell.position.set(mx, layer * 0.04, mz);
+        memComb.add(mCell);
+      }
+      // Layer cap every 3rd layer
+      if (layer % 3 === 2) {
+        memComb.add(new THREE.Mesh(
+          new THREE.CylinderGeometry(0.7, 0.7, 0.01, 6),
+          mt('time', { opacity: 0.25 })
+        )).position.y = layer * 0.04 + 0.02;
+      }
+    }
+    // Petiole connecting satellite to center (agent — data bus)
+    const petCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(-hx * 0.4, 0.1 + r() * 0.2, -hz * 0.4),
+      new THREE.Vector3(-hx, 0, -hz)
+    ]);
+    memComb.add(new THREE.Mesh(
+      new THREE.TubeGeometry(petCurve, 8, 0.035, 5, false),
+      mt('agent', { opacity: 0.4 })
+    ));
+    g.add(memComb);
+  }
+
+  // ── MYCELIUM DATA NETWORK — radial branching from center (flow) ──
+  for (let i = 0; i < 15; i++) {
+    const a = r() * Math.PI * 2, len = 1.5 + r() * 3;
+    const pts = [];
+    for (let s = 0; s < 6; s++) {
+      const t = s / 5;
+      pts.push(new THREE.Vector3(
+        Math.cos(a + (r()-0.5)*t*0.4) * t * len,
+        0.05 + (r()-0.5)*0.03,
+        Math.sin(a + (r()-0.5)*t*0.4) * t * len
+      ));
+    }
+    g.add(new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, 0.012, 4, false),
+      mt('flowLt', { opacity: 0.2 })
+    ));
+  }
+
+  // ── SECOND TIER — stacked below (like a wasp nest's second comb = second server sled) ──
+  const tier2 = new THREE.Group();
+  tier2.position.y = -2;
+  const t2Disc = new THREE.CylinderGeometry(3.8, 4, 0.07, 6);
+  displaceGeo(t2Disc, 0.05, 2, 77);
+  tier2.add(new THREE.Mesh(t2Disc, mt('flowDk', { opacity: 0.25 }))).position.y = -0.15;
+  // Smaller version of the central+satellite pattern
+  for (let q = -5; q <= 5; q++) for (let rr = -5; rr <= 5; rr++) {
+    if (Math.abs(q + rr) > 5) continue;
+    const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
+    if (Math.sqrt(x * x + z * z) > 2.5) continue;
+    tier2.add(new THREE.Mesh(cellGeo, mt(r()>0.6?'agent':'agentLt', { opacity: 0.3 }))).position.set(x, 0, z);
+    if (r() > 0.5) tier2.add(new THREE.Mesh(capGeo, mt('time', { opacity: 0.4 }))).position.set(x, 0.19, z);
+  }
+  // Petioles from tier 1 to tier 2
+  for (let p = 0; p < 4; p++) {
+    const pa = (p / 4) * Math.PI * 2 + r() * 0.4;
+    const px = Math.cos(pa) * r() * 1.5, pz = Math.sin(pa) * r() * 1.5;
+    const petC = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(px, 2, pz),
+      new THREE.Vector3(px + (r()-0.5)*0.3, 1, pz + (r()-0.5)*0.3),
+      new THREE.Vector3(px + (r()-0.5)*0.2, 0.1, pz + (r()-0.5)*0.2)
+    ]);
+    tier2.add(new THREE.Mesh(new THREE.TubeGeometry(petC, 8, 0.04, 5, false), mt('agent', { opacity: 0.4 })));
+    // Cooling capillary spiraling around petiole
+    const coolPts = [];
+    for (let s = 0; s < 16; s++) {
+      const t = s / 15, pt = petC.getPoint(t);
+      coolPts.push(new THREE.Vector3(pt.x + Math.cos(s*1.1)*0.1, pt.y, pt.z + Math.sin(s*1.1)*0.1));
+    }
+    tier2.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(coolPts), 12, 0.012, 4, false), mt('flowLt', { opacity: 0.15 })));
+  }
+  g.add(tier2);
+
+  // ── THIRD TIER — smallest, aging ──
+  const tier3 = new THREE.Group();
+  tier3.position.y = -3.8;
+  const t3Disc = new THREE.CylinderGeometry(2.5, 2.7, 0.06, 6);
+  displaceGeo(t3Disc, 0.06, 2, 44);
+  tier3.add(new THREE.Mesh(t3Disc, mt('flowDk', { opacity: 0.2 }))).position.y = -0.12;
+  for (let q = -4; q <= 4; q++) for (let rr = -4; rr <= 4; rr++) {
+    if (Math.abs(q + rr) > 4) continue;
+    const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
+    if (Math.sqrt(x * x + z * z) > 1.8) continue;
+    if (r() > 0.85) continue; // some cells decaying at edges
+    tier3.add(new THREE.Mesh(cellGeo, mt('agent', { opacity: 0.2 + r()*0.1 }))).position.set(x, 0, z);
+  }
+  for (let p = 0; p < 3; p++) {
+    const pa = (p / 3) * Math.PI * 2 + r() * 0.5;
+    tier3.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+      new THREE.Vector3(Math.cos(pa)*0.5, 1.8, Math.sin(pa)*0.5),
+      new THREE.Vector3(Math.cos(pa)*0.3, 0.9, Math.sin(pa)*0.3),
+      new THREE.Vector3(Math.cos(pa)*0.4, 0.1, Math.sin(pa)*0.4)
+    ]), 6, 0.035, 5, false), mt('agent', { opacity: 0.35 })));
+  }
+  g.add(tier3);
+
+  // ── OPEN CALDERA ENVELOPE — heat rises out the top, sides protect ──
+  // A wasp building a chip would NOT seal it shut — computation generates heat.
+  // Open top allows thermal convection. Flared rim. Bowl/ring form.
+  for (let l = 0; l < 20; l++) {
+    const rad = 4.2 + l * 0.16;
+    // Bowl shape — starts at ~40° from horizontal, open top
+    const geo = new THREE.SphereGeometry(rad, 44, 32, 0, Math.PI * 2, 0.55, Math.PI * 0.48);
+    displaceGeo(geo, 0.1 + l * 0.007, 1.1 + l * 0.12, l * 4.3);
+
+    // Flare the rim outward + tear bottom edges
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      const r2 = Math.sqrt(x * x + z * z);
+
+      // Flare top rim outward (where y is highest = rim)
+      if (y > rad * 0.15) {
+        const flare = 1 + (y / rad - 0.15) * 0.6;
+        pos.setX(i, x * flare);
+        pos.setZ(i, z * flare);
+      }
+
+      // Tear bottom edges
+      if (y < -rad * 0.3) {
+        const tn = fbm(x * 2 + l, y * 2, z * 2 + l * 0.5);
+        pos.setY(i, y - ((-y / rad) - 0.3) * 0.4 * tn * rad * 0.25);
+      }
+    }
+    pos.needsUpdate = true; geo.computeVertexNormals();
+
+    const env = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+      color: new THREE.Color().setHSL(0.12, currentTheme.envSat + 0.05, currentTheme.envelope + 0.02 + l * 0.003),
+      transparent: true, opacity: 0.03 + l * 0.003,
+      depthWrite: false, side: THREE.DoubleSide, roughness: 0.65
+    }));
+    env.position.y = -1.5;
+    g.add(env);
+  }
+
+  // ── INNER RIM DETAIL — thin rings at the flared top edge ──
+  for (let i = 0; i < 5; i++) {
+    const rimR = 4.8 + i * 0.2;
+    const rimGeo = new THREE.TorusGeometry(rimR, 0.02 + i * 0.005, 6, 48);
+    displaceGeo(rimGeo, 0.06, 2, i * 17);
+    const rim = new THREE.Mesh(rimGeo, new THREE.MeshStandardMaterial({
+      color: new THREE.Color().setHSL(0.12, currentTheme.envSat, currentTheme.envelope + 0.05),
+      transparent: true, opacity: 0.04 + i * 0.005,
+      depthWrite: false, side: THREE.DoubleSide, roughness: 0.7
+    }));
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.8 + i * 0.15;
+    g.add(rim);
+  }
+
+  // ── WIDE SUBSTRATE DISC — the platform everything grows on ──
+  const wideSub = new THREE.Mesh(
+    new THREE.CylinderGeometry(6.5, 7, 0.06, 6),
+    mt('flow', { opacity: 0.18 })
+  );
+  wideSub.position.y = -0.1;
+  g.add(wideSub);
+
+  // ── DRAMATIC COOLING RINGS — oversized, floating above ──
+  // These are the thermal convection loops — heat rises through the caldera
+  // and these rings capture and redirect it back down the sides
+  for (let i = 0; i < 6; i++) {
+    const ringR = 4 + i * 1.2;
+    const ringThick = 0.04 + i * 0.015;
+    const ringGeo = new THREE.TorusGeometry(ringR, ringThick, 8, 64);
+    displaceGeo(ringGeo, 0.04 + i * 0.01, 1.5, i * 13);
+    const ring = new THREE.Mesh(ringGeo, mt('flow', { opacity: 0.22 - i * 0.02 }));
+    ring.rotation.x = Math.PI / 2 + (r() - 0.5) * 0.08;
+    ring.rotation.z = (r() - 0.5) * 0.05;
+    ring.position.y = 2 + i * 1.1;
+    g.add(ring);
+  }
+  // Vertical connectors between rings — heat return paths
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 + r() * 0.2;
+    const pts = [
+      new THREE.Vector3(Math.cos(a) * 4, 2, Math.sin(a) * 4),
+      new THREE.Vector3(Math.cos(a) * 6, 4.5, Math.sin(a) * 6),
+      new THREE.Vector3(Math.cos(a) * 9, 7.5, Math.sin(a) * 9)
+    ];
+    g.add(new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, 0.02, 5, false),
+      mt('flowLt', { opacity: 0.12 })
+    ));
+  }
+
+  // ── DECOMPOSITION — previous generation fragments below ──
+  for (let i = 0; i < 30; i++) {
+    const a = r() * Math.PI * 2, d = r() * 3;
+    const frag = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12 + r()*0.08, 0.15, 0.06, 6, 1, true),
+      mt(r()>0.5 ? 'time' : 'flow', { opacity: 0.06 + r()*0.06 })
+    );
+    frag.position.set(Math.cos(a)*d, -5.5 + r()*0.3, Math.sin(a)*d);
+    frag.rotation.set(r()*Math.PI, r(), r()*0.5);
+    g.add(frag);
+  }
+
+  g.position.y = 1;
+}
+
+
+// ═══ MANHATTAN × WASP NEST — dense vertical hex towers, canopy above, open sides ═══
+function genManhattanHybrid(g) {
+  const r = R(91);
+  const cellGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.4, 6, 1, true);
+  const capGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.05, 6);
+
+  // ── ORGANIC GROUND — no concrete, living substrate ──
+  const groundGeo = new THREE.CylinderGeometry(10, 10.5, 0.12, 6);
+  displaceGeo(groundGeo, 0.04, 0.8, 33);
+  g.add(new THREE.Mesh(groundGeo, mt('base', { opacity: 0.15 })));
+
+  // ── DENSE TOWER CLUSTERS — "buildings" as vertical hex cell stacks ──
+  for (let i = 0; i < 40; i++) {
+    const a = r() * Math.PI * 2;
+    const d = 0.5 + r() * 7.5;
+    if (r() > 1 - (d / 10) * 0.3) continue;
+    const tx = Math.cos(a) * d + (r() - 0.5) * 1;
+    const tz = Math.sin(a) * d + (r() - 0.5) * 1;
+    const dist = Math.sqrt(tx * tx + tz * tz);
+    const maxH = Math.max(1, 8 - dist * 0.6 + (r() - 0.5) * 3);
+    const numFloors = Math.floor(1 + r() * maxH);
+    const towerR = 0.3 + r() * 0.4;
+    for (let f = 0; f < numFloors; f++) {
+      const numCells = f < numFloors * 0.7 ? Math.floor(3 + r() * 4) : Math.max(1, Math.floor((numFloors - f) * 1.5));
+      for (let ci = 0; ci < numCells; ci++) {
+        const ca = (ci / numCells) * Math.PI * 2 + f * 0.1;
+        const cd = ci === 0 ? 0 : towerR * (0.4 + r() * 0.3);
+        const cx = tx + Math.cos(ca) * cd;
+        const cz = tz + Math.sin(ca) * cd;
+        const cell = new THREE.Mesh(cellGeo, mt('agent', { opacity: 0.3 - dist * 0.015 }));
+        cell.position.set(cx, 0.2 + f * 0.42, cz);
+        cell.rotation.y = r() * 0.15;
+        g.add(cell);
+        if (r() > 0.5) {
+          g.add(new THREE.Mesh(capGeo, mt('time', { opacity: 0.35 }))).position.set(cx, 0.42 + f * 0.42, cz);
+        }
+      }
+    }
+  }
+
+  // ── WINDING PATHS ──
+  for (let i = 0; i < 18; i++) {
+    const a0 = r() * Math.PI * 2, len = 3 + r() * 6;
+    const pts = [];
+    for (let s = 0; s < 8; s++) {
+      const t = s / 7;
+      pts.push(new THREE.Vector3(Math.cos(a0 + (r()-0.5)*t*1.2) * t * len, 0.1, Math.sin(a0 + (r()-0.5)*t*1.2) * t * len));
+    }
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 14, 0.05, 5, false), mt('agentLt', { opacity: 0.2 })));
+  }
+
+  // ── SHALLOW ROOTS — temporary ──
+  for (let i = 0; i < 12; i++) {
+    const a = r() * Math.PI * 2, d = 1 + r() * 6;
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+      new THREE.Vector3(Math.cos(a)*d, 0, Math.sin(a)*d),
+      new THREE.Vector3(Math.cos(a)*d*0.7, -0.4, Math.sin(a)*d*0.7),
+      new THREE.Vector3(Math.cos(a)*d*0.4, -0.7, Math.sin(a)*d*0.4)
+    ]), 6, 0.02, 4, false), mt('flow', { opacity: 0.12 })));
+  }
+
+  // ── CANOPY ENVELOPE — closed top, open sides (street access) ──
+  for (let l = 0; l < 18; l++) {
+    const rad = 10 + l * 0.18;
+    const geo = new THREE.SphereGeometry(rad, 44, 28, 0, Math.PI * 2, 0, Math.PI * 0.38);
+    displaceGeo(geo, 0.08 + l * 0.006, 0.8 + l * 0.1, l * 6.1);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      if (y < rad * 0.7) {
+        const tn = fbm(pos.getX(i)*1.5+l, y+l, pos.getZ(i)*1.5);
+        const rimDist = (rad*0.7 - y) / rad;
+        pos.setY(i, y + rimDist * tn * rad * 0.15);
+        const flare = 1 + rimDist * 0.3;
+        pos.setX(i, pos.getX(i) * flare);
+        pos.setZ(i, pos.getZ(i) * flare);
+      }
+    }
+    pos.needsUpdate = true; geo.computeVertexNormals();
+    g.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+      color: new THREE.Color().setHSL(0.12, currentTheme.envSat, currentTheme.envelope+0.04+l*0.004),
+      transparent:true, opacity:0.025+l*0.002, depthWrite:false, side:THREE.DoubleSide, roughness:0.65
+    }))).position.y = 1;
+  }
+
+  // ── DECOMPOSITION RING ──
+  for (let i = 0; i < 35; i++) {
+    const a = r()*Math.PI*2, d = 7+r()*3;
+    const frag = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,0.06,6,1,true), mt(r()>0.5?'time':'agent',{opacity:0.06+r()*0.06}));
+    frag.position.set(Math.cos(a)*d, r()*0.3, Math.sin(a)*d);
+    frag.rotation.set(r()*Math.PI, r(), r());
+    g.add(frag);
+  }
+  g.position.y = -0.5;
+}
+
+// ═══ CONVERGENCE — compute calderas under perforated district canopy ═══
+function genConvergence(g) {
+  const r = R(137);
+  const cellGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.35, 6, 1, true);
+  const capGeo = new THREE.CylinderGeometry(0.17, 0.17, 0.04, 6);
+
+  const groundGeo = new THREE.CylinderGeometry(12, 12.5, 0.1, 6);
+  displaceGeo(groundGeo, 0.03, 0.5, 55);
+  g.add(new THREE.Mesh(groundGeo, mt('base', { opacity: 0.12 })));
+
+  // ── 7 COMPUTE CLUSTERS with caldera envelopes ──
+  const clusters = [[0, 0, 1.4]];
+  for (let i = 0; i < 6; i++) {
+    const a = (i/6)*Math.PI*2 + r()*0.3;
+    clusters.push([Math.cos(a)*(5+r()*2), Math.sin(a)*(5+r()*2), 0.6+r()*0.4]);
+  }
+  const calderaPositions = [];
+
+  clusters.forEach(([cx, cz, scale], idx) => {
+    calderaPositions.push([cx, cz, 2.5*scale]);
+    const subGeo = new THREE.CylinderGeometry(2*scale, 2.1*scale, 0.06, 6);
+    displaceGeo(subGeo, 0.04, 2, idx*11);
+    g.add(new THREE.Mesh(subGeo, mt('flow',{opacity:0.18}))).position.set(cx, 0.06, cz);
+
+    const combR = 1.5*scale, cs = 0.42;
+    for (let q=-Math.ceil(combR/cs); q<=Math.ceil(combR/cs); q++) {
+      for (let rr=-Math.ceil(combR/cs); rr<=Math.ceil(combR/cs); rr++) {
+        if (Math.abs(q+rr)>Math.ceil(combR/cs)) continue;
+        const x=q*cs*0.87+rr*cs*0.435, z=rr*cs*0.755;
+        if (Math.sqrt(x*x+z*z)>combR) continue;
+        const n=fbm(x*2+idx*10,z*2,0); if(n<0.3) continue;
+        g.add(new THREE.Mesh(cellGeo, mt('agent',{opacity:0.3+n*0.1}))).position.set(cx+x,0.2,cz+z);
+        if(r()>0.45) g.add(new THREE.Mesh(capGeo, mt('time',{opacity:0.4}))).position.set(cx+x,0.4,cz+z);
+      }
+    }
+
+    for (let si=0; si<3; si++) {
+      const sa=(si/3)*Math.PI*2+r()*0.5, sd=combR*0.8;
+      const sx=cx+Math.cos(sa)*sd, sz2=cz+Math.sin(sa)*sd;
+      for (let layer=0; layer<5; layer++) for (let ci=0; ci<5; ci++) {
+        const ca=(ci/5)*Math.PI*2, cd=ci===0?0:0.15;
+        g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.03,6), mt(layer%2===0?'flow':'flowLt',{opacity:0.3}))).position.set(sx+Math.cos(ca)*cd, 0.15+layer*0.035, sz2+Math.sin(ca)*cd);
+      }
+    }
+
+    // Per-cluster caldera (open top, 10 layers)
+    for (let l=0; l<10; l++) {
+      const cRad = 2.5*scale + l*0.1;
+      const cGeo = new THREE.SphereGeometry(cRad, 32, 22, 0, Math.PI*2, 0.5, Math.PI*0.5);
+      displaceGeo(cGeo, 0.08+l*0.006, 1+l*0.15, l*7+idx*30);
+      const cPos = cGeo.attributes.position;
+      for (let i=0; i<cPos.count; i++) {
+        const y=cPos.getY(i);
+        if (y>cRad*0.1) { const flare=1+(y/cRad-0.1)*0.4; cPos.setX(i,cPos.getX(i)*flare); cPos.setZ(i,cPos.getZ(i)*flare); }
+      }
+      cPos.needsUpdate=true; cGeo.computeVertexNormals();
+      g.add(new THREE.Mesh(cGeo, new THREE.MeshStandardMaterial({
+        color:new THREE.Color().setHSL(0.12,currentTheme.envSat+0.03,currentTheme.envelope+0.03+l*0.004),
+        transparent:true, opacity:0.025+l*0.003, depthWrite:false, side:THREE.DoubleSide, roughness:0.65
+      }))).position.set(cx, -0.2, cz);
+    }
+  });
+
+  // ── PATHS ──
+  for (let i=0; i<12; i++) {
+    const a0=r()*Math.PI*2, len=4+r()*7, pts=[];
+    for (let s=0; s<8; s++) { const t=s/7; pts.push(new THREE.Vector3(Math.cos(a0+(r()-0.5)*t*0.5)*t*len, 0.08, Math.sin(a0+(r()-0.5)*t*0.5)*t*len)); }
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),12,0.04,4,false), mt('agentLt',{opacity:0.18})));
+  }
+
+  // ── MYCELIUM ──
+  clusters.forEach(([cx1,cz1],i) => {
+    if(i===0) return;
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+      new THREE.Vector3(cx1,0.05,cz1), new THREE.Vector3(cx1*0.5+(r()-0.5)*0.5,-0.2,cz1*0.5+(r()-0.5)*0.5), new THREE.Vector3(0,0.05,0)
+    ]),8,0.02,4,false), mt('flowLt',{opacity:0.15})));
+  });
+
+  // ── PERFORATED DISTRICT CANOPY — holes above each caldera ──
+  for (let l=0; l<14; l++) {
+    const rad = 12+l*0.16;
+    const geo = new THREE.SphereGeometry(rad, 48, 32, 0, Math.PI*2, 0, Math.PI*0.32);
+    displaceGeo(geo, 0.06+l*0.005, 0.6+l*0.08, l*5.5);
+    const pos = geo.attributes.position;
+    for (let i=0; i<pos.count; i++) {
+      const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
+      for (const [ccx,ccz,ccr] of calderaPositions) {
+        const dx=x-ccx, dz=z-ccz, hDist=Math.sqrt(dx*dx+dz*dz);
+        if (hDist < ccr*1.2) {
+          const pushFactor = 1+(1-hDist/(ccr*1.2))*0.8;
+          const angle = Math.atan2(dz,dx);
+          pos.setX(i, ccx+Math.cos(angle)*hDist*pushFactor);
+          pos.setZ(i, ccz+Math.sin(angle)*hDist*pushFactor);
+          pos.setY(i, y-(1-hDist/(ccr*1.2))*1.5);
+        }
+      }
+      if (y<rad*0.85) {
+        const tn=fbm(x*1.2+l,y+l,z*1.2), rimDist=(rad*0.85-y)/rad;
+        pos.setY(i, y+rimDist*tn*rad*0.1);
+        pos.setX(i, pos.getX(i)*(1+rimDist*0.2));
+        pos.setZ(i, pos.getZ(i)*(1+rimDist*0.2));
+      }
+    }
+    pos.needsUpdate=true; geo.computeVertexNormals();
+    g.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+      color:new THREE.Color().setHSL(0.11,currentTheme.envSat+0.02,currentTheme.envelope+0.03+l*0.003),
+      transparent:true, opacity:0.02+l*0.002, depthWrite:false, side:THREE.DoubleSide, roughness:0.6
+    }))).position.y = 2;
+  }
+
+  // ── DECOMPOSITION ──
+  for (let i=0; i<45; i++) {
+    const a=r()*Math.PI*2, d=9+r()*3;
+    const frag = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,0.04,6,1,true), mt(r()>0.5?'time':r()>0.5?'agent':'flow',{opacity:0.05+r()*0.06}));
+    frag.position.set(Math.cos(a)*d, r()*0.2, Math.sin(a)*d);
+    frag.rotation.set(r()*Math.PI, r(), r());
+    g.add(frag);
+  }
+  g.position.y = -0.3;
+}
+
+const COLORS={flow:"#E91E8C",agent:"#33DD33",time:"#888"};
+const SPECS={
+  lifecycle:{fn:genLifecycle,name:"LIFECYCLE",arch:"WASP NEST \u00B7 BIRTH TO DEATH",cam:[8,5,8],tgt:[0,-1,0],isLifecycle:true,rows:[],manifesto:"",ledger:[]},
+  wasp_nest:{fn:genWaspNest,name:"WASP NEST",arch:"METABOLISM",cam:[8,6,8],tgt:[0,-1,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL BARK\n< 50m radius","CHEW FIBER\nMandible processing","MIX SALIVA\nBinding agent","FORM PULP\nWet application","DRY + HARDEN\nAmbient curing"],right:["DETACH\nAnchor weakens","FALL TO GROUND\nGravity","DISSOLVE\nOne winter","RETURN TO SOIL\nNutrient cycle"]},{cat:"agent",label:"LABOR + CONTROL",left:["QUEEN FOUNDS\nSingle founder","WORKERS HATCH\nFirst generation","WORKERS BUILD\n40 trips/day","WORKERS = BUILDERS\n= INHABITANTS"],right:["QUEEN LEAVES\nNew queens depart","COLONY DISPERSES\nWorkers die","NO MAINTENANCE\nAbandoned by design"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SPRING START\nQueen selects site","SUMMER PEAK\nMaximum colony","FALL DECLINE\nNo new brood"],right:["FIRST FROST\nScheduled death","1 WINTER\nFull decomposition","NUTRIENTS CYCLE\nFeed next season","REPEAT\nNew queen, new nest"]}],manifesto:"This system optimizes for one season. Every material is local, every loop is closed, every element knows when it ends. Death is not failure \u2014 it is the design.",ledger:[["DEATH PLAN","Total decomposition, scheduled",false],["WASTE","Closed loop",false],["LABOR","Visible \u2014 builder IS inhabitant",false],["SUPPLY CHAIN","< 50m, visible in object",false]]},
+  h100:{fn:genH100,name:"NVIDIA H100",arch:"OBSOLESCENCE",cam:[12,6,12],tgt:[0,1,-3],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["SILICA MINE\nSpruce Pine, NC","CARGO SHIP\n6,000 km","PURIFICATION\nGermany","CRYSTAL GROWTH\nJapan","WAFER SLICE\nTaiwan","CHIP FABRICATE\nTSMC, Taiwan","PCB ASSEMBLY\nFoxconn, China","AIR FREIGHT\n12,000 km"],right:["E-WASTE\nDESTINATION?","MATERIAL\nRECOVERY?","RARE EARTH\nRETURN?","WATER\nREMEDIATION?","THERMAL\nWASTE?"]},{cat:"agent",label:"LABOR + CONTROL",left:["DRC MINERS\nCobalt, artisanal","CHEMICAL ENG.\nWacker Chemie","FAB TECHS\nTSMC cleanroom","ASML OPERATORS\nEUV lithography","FOXCONN WORKERS\n300K, 12hr shifts","DATA CENTER OPS\nRemote monitoring"],right:["WORKER\nTRANSITION?","LABOR\nACCOUNTABILITY?"]},{cat:"time",label:"LIFESPAN + DEATH",left:["DESIGN CYCLE\n3 years R&D","FABRICATION\n3 months","DEPLOYMENT\nImmediate","OPERATIONAL\n18 months"],right:["DECOMMISSION\nPLAN?","END OF LIFE\nPROTOCOL?","FACILITY\nTRANSITION?","SITE\nREMEDIATION?","GENERATION\nHANDOFF?","LONG-TERM\nIMPACT?"]}],manifesto:"This system optimizes for computational throughput at any cost. No element has a decommission plan. The death strategy is: become someone else\u2019s problem.",ledger:[["DEATH PLAN","None",true],["WASTE","Open loop \u2014 externalized",false],["LABOR","Hidden at every stage",false],["SUPPLY CHAIN","6 continents, illegible",false]]},
+  manhattan:{fn:genManhattan,name:"MANHATTAN GRID",arch:"PALIMPSEST",cam:[14,10,14],tgt:[0,0,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LENAPE LAND\n55 ecosystems","TIMBER + STONE\nLocal quarries","BRICK + STEEL\nRegional mills","CONCRETE + GLASS\nGlobal supply","INFRASTRUCTURE\nWater, gas, steam"],right:["DEMOLITION\nDEBRIS?","MATERIAL\nRECOVERY?","PIPE\nREMOVAL?"]},{cat:"agent",label:"LABOR + CONTROL",left:["COMMISSIONERS\n1811 plan","DEVELOPERS\nLot by lot","CONSTRUCTION\nUnion labor","MAINTENANCE\nBuilding supers"],right:["REBUILD\nSame lots, new bldgs","REZONE\nProgrammatic shift","OWNERSHIP\nTURNOVER?"]},{cat:"time",label:"LIFESPAN + DEATH",left:["GRID: 1811\nNo end date","BUILDINGS\n20\u2013200 years","UNDERGROUND\nSince 1842"],right:["BUILDINGS DIE\nDemolish + replace","GRID PERSISTS\nNo removal mechanism","UNDERGROUND\nACCUMULATES?","LONG-TERM\nFUTURE?"]}],manifesto:"This system optimizes for nothing, and that is its genius. The grid makes no claim about what should be built \u2014 only where. Underground, nothing is ever removed.",ledger:[["DEATH PLAN","Buildings: demolish + replace. Grid: none",true],["WASTE","Accumulated underground",false],["LABOR","Partially visible",false],["SUPPLY CHAIN","Market-driven, variable",false]]},
+  hybrid:{fn:genHybrid,name:"H100 \u00D7 WASP NEST",arch:"PROPOSITION",cam:[10,6,10],tgt:[0,1,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL CELLULOSE\nBiodegradable substrate","MYCELIUM TRACES\nGrown, not etched","MINERAL SALTS\nLocal soil extraction","ORGANIC ASSEMBLY\nAmbient temperature"],right:["CONTROLLED DECAY\n6-month decomposition","MATERIAL HARVEST\nComponents separated","SUBSTRATE RETURN\nCellulose to soil","MINERAL RECLAIM\nSalts re-enter cycle"]},{cat:"agent",label:"LABOR + CONTROL",left:["LOCAL FABRICATION\nOn-site growth facility","BUILDER = OPERATOR\nSame team, full cycle","OPEN ARCHITECTURE\nAll processes visible","COMMUNITY GOVERNED\nNo hidden hierarchy"],right:["OPERATOR MAINTAINS\nSame team until death","KNOWLEDGE TRANSFER\nNext generation trained","GRACEFUL HANDOFF\nPlanned succession"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SEASON START\nNew unit grown","PEAK COMPUTE\n4\u20136 months","EFFICIENCY DECLINE\nGraceful degradation"],right:["SCHEDULED DEATH\nPredetermined end date","DECOMPOSITION\nControlled dissolution","NUTRIENT RETURN\nFeeds next generation","NEW UNIT GROWS\nCycle repeats"]}],manifesto:"What if a chip knew how to die? This is the H100 redesigned with the wasp nest\u2019s constitution: local materials, visible labor, closed loops, and a death plan written into the first line of its design. The envelope is no longer a void \u2014 it is a season.",ledger:[["DEATH PLAN","Scheduled decomposition at 6 months",false],["WASTE","Closed loop \u2014 all materials return",false],["LABOR","Visible \u2014 builder operates and decommissions",false],["SUPPLY CHAIN","Local, visible in finished object",false]]},
+  manhattan_hybrid:{fn:genManhattanHybrid,name:"MANHATTAN \u00D7 WASP NEST",arch:"PROPOSITION",cam:[12,8,12],tgt:[0,0,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL TIMBER\nForest within watershed","CLAY + EARTH\nSite excavation","FIBER BINDING\nOrganic adhesives","SEASONAL HARVEST\nMaterial gathered in spring"],right:["STRUCTURE RELEASED\nEnd of season","MATERIAL SEPARATED\nTimber, clay, fiber sorted","TIMBER COMPOSTED\nReturns to forest floor","CLAY RETURNED\nBackfill to excavation"]},{cat:"agent",label:"LABOR + CONTROL",left:["NO COMMISSIONERS\nNo imposed grid","COMMUNITY PATHS\nRoutes emerge from use","BUILDER = INHABITANT\nSame people, full cycle","COLLECTIVE GOVERNANCE\nNo landlord hierarchy"],right:["INHABITANTS DISASSEMBLE\nSame builders take down","PATHS DISSOLVE\nNo permanent right-of-way","KNOWLEDGE PASSED\nNext season\u2019s builders trained"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SPRING FOUNDING\nNew district grown","SUMMER OCCUPATION\nPeak density","FALL THINNING\nEdge structures released"],right:["WINTER DISSOLUTION\nAll structures decompose","GROUND RESTS\nSoil recovers one season","SPRING REGROWTH\nNew district, new layout","NO GRID PERSISTS\nNothing is permanent"]}],manifesto:"What if a city knew it was seasonal? This is Manhattan redesigned with the wasp nest\u2019s constitution: no permanent grid, no underground accumulation, no buildings that outlive their builders. The city grows each spring and dissolves each winter. The ground remembers nothing. Every layout is new.",ledger:[["DEATH PLAN","Total seasonal dissolution",false],["WASTE","Closed loop \u2014 all materials return to site",false],["LABOR","Visible \u2014 builders are inhabitants",false],["SUPPLY CHAIN","Watershed-local, visible",false]]},
+  convergence:{fn:genConvergence,name:"THE SEASONAL DATA CENTER",arch:"CONVERGENCE",cam:[14,8,14],tgt:[0,0.5,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL SUBSTRATE\nCellulose from watershed","MYCELIUM NETWORK\nGrown between clusters","MINERAL CYCLING\nSoil-to-chip-to-soil","THERMAL LOOPS\nHeat feeds greenhouses"],right:["CLUSTER RELEASE\nEdge nodes dissolve first","MATERIAL SORTING\nOrganic from mineral","COMPOSTING\nCellulose returns to forest","MINERAL RETURN\nSalts re-enter soil"]},{cat:"agent",label:"LABOR + CONTROL",left:["COMMUNITY SITING\nCollective decision","GROWERS = OPERATORS\nSame team grows + runs","OPEN COMPUTATION\nAll processes visible","NO DATA CENTER CORP\nCooperative governance"],right:["OPERATORS DECOMM.\nSame team takes down","CLUSTER HANDOFF\nKnowledge to next team","SITE REMEDIATION\nGrowers restore ground"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SPRING GROWTH\nNew clusters germinate","SUMMER PEAK\nMaximum compute density","FALL MIGRATION\nWorkloads shift to new district"],right:["WINTER DISSOLUTION\nAll hardware decomposes","GROUND FALLOW\nSoil recovers","SPRING REGROWTH\nNew layout, new clusters","PERPETUAL CYCLE\nNo generation outlives its season"]}],manifesto:"This is what a data center looks like when it knows how to die. Nine compute clusters grow from local substrate each spring, connected by mycelium traces, wrapped in a seasonal envelope. In winter the district dissolves. The ground rests. In spring, a new district grows \u2014 different layout, same watershed, same community. The computation is seasonal. The land is permanent.",ledger:[["DEATH PLAN","Seasonal dissolution \u2014 entire district",false],["WASTE","Closed loop \u2014 thermal energy feeds adjacent agriculture",false],["LABOR","Visible \u2014 growers are operators are decommissioners",false],["SUPPLY CHAIN","Watershed-local, 100% visible",false]]}
+
+
+};
+
+// ═══ BREEDING RELATIONSHIPS ═══
+const BREEDING = {
+  wasp_nest: { partners: [], results: {} },
+  h100: { partners: ['wasp_nest'], results: { wasp_nest: 'hybrid' } },
+  manhattan: { partners: ['wasp_nest'], results: { wasp_nest: 'manhattan_hybrid' } },
+  hybrid: { partners: ['manhattan_hybrid'], results: { manhattan_hybrid: 'convergence' } },
+  manhattan_hybrid: { partners: ['hybrid'], results: { hybrid: 'convergence' } },
+  convergence: { partners: [], results: {} },
+  lifecycle: { partners: [], results: {} }
+};
+
+const VALUE_SCORES = {
+  wasp_nest: { death:10, waste:10, labor:10, supply:10 },
+  h100: { death:0, waste:1, labor:0, supply:1 },
+  manhattan: { death:3, waste:2, labor:5, supply:4 },
+  hybrid: { death:9, waste:10, labor:9, supply:10 },
+  manhattan_hybrid: { death:9, waste:10, labor:10, supply:9 },
+  convergence: { death:10, waste:10, labor:10, supply:10 },
+  lifecycle: { death:10, waste:10, labor:10, supply:10 }
+};
+
+const BASE_SPECIMENS = ['wasp_nest', 'h100', 'manhattan'];
+const HYBRID_SPECIMENS = ['hybrid', 'manhattan_hybrid'];
+const ALL_POSSIBLE_HYBRIDS = [
+  { parents: ['h100','wasp_nest'], key:'hybrid', exists:true },
+  { parents: ['manhattan','wasp_nest'], key:'manhattan_hybrid', exists:true },
+  { parents: ['h100','manhattan'], key:null, exists:false },
+  { parents: ['hybrid','manhattan_hybrid'], key:'convergence', exists:true },
+];
+
+// ═══ STATE ═══
+let currentPage = 'home'; // 'home' | 'detail'
+let currentKey = null;
+let showTree = false;
+let showCrossbreed = false;
+let currentMode = 'xray';
+
+// ═══ THREE.JS ═══
+let scene, camera, renderer, modelGroup;
+const clipPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
+let sectionEnabled = false;
+
+// Camera control state
+let camRotY = 0.8, camRotX = 0.4;
+let camZoom = 11;
+let camPanX = 0, camPanY = 0;
+let camTarget = [0, 0, 0];
+let isDragging = false, isPanning = false;
+let dragStart = { x: 0, y: 0 };
+let autoRotate = true;
+let autoRotSpeed = 0.002;
+let elapsed = 0;
+
+function initThree() {
+  const vp = document.getElementById('viewport');
+  if (!vp) return;
+  scene = new THREE.Scene(); scene.background = new THREE.Color(currentTheme.bg);
+  camera = new THREE.OrthographicCamera(-10,10,7.5,-7.5,-100,300);
+  renderer = new THREE.WebGLRenderer({ antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.sortObjects = true; renderer.localClippingEnabled = true;
+  vp.innerHTML = ''; vp.appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff,0.75));
+  [[10,18,10,0.5],[-8,10,-6,0.2],[0,5,15,0.15]].forEach(([x,y,z,i])=>{const d=new THREE.DirectionalLight(0xffffff,i);d.position.set(x,y,z);scene.add(d);});
+  modelGroup = new THREE.Group(); scene.add(modelGroup);
+
+  // Event listeners
+  const canvas = renderer.domElement;
+  canvas.style.cursor = 'grab';
+
+  canvas.addEventListener('mousedown', e => {
+    if (e.shiftKey || e.button === 2) { isPanning = true; } else { isDragging = true; }
+    dragStart = { x: e.clientX, y: e.clientY };
+    canvas.style.cursor = isPanning ? 'move' : 'grabbing';
+    autoRotate = false;
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (isDragging) {
+      const dx = (e.clientX - dragStart.x) * 0.005;
+      const dy = (e.clientY - dragStart.y) * 0.005;
+      camRotY += dx;
+      camRotX = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, camRotX + dy));
+      dragStart = { x: e.clientX, y: e.clientY };
+      updateCamera();
+    }
+    if (isPanning) {
+      const dx = (e.clientX - dragStart.x) * 0.02;
+      const dy = (e.clientY - dragStart.y) * 0.02;
+      camPanX -= dx;
+      camPanY += dy;
+      dragStart = { x: e.clientX, y: e.clientY };
+      updateCamera();
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    isDragging = false; isPanning = false;
+    canvas.style.cursor = 'grab';
+    // Resume auto-rotate after 2 seconds
+    setTimeout(() => { if (!isDragging) autoRotate = true; }, 2000);
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    isDragging = false; isPanning = false;
+    canvas.style.cursor = 'grab';
+  });
+
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    camZoom = Math.max(3, Math.min(25, camZoom + (e.deltaY > 0 ? 0.8 : -0.8)));
+    updateCamera();
+  }, { passive: false });
+
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Touch support
+  let lastTouchDist = 0;
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      dragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else if (e.touches.length === 2) {
+      isDragging = false;
+      lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+    autoRotate = false;
+  });
+
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isDragging) {
+      const dx = (e.touches[0].clientX - dragStart.x) * 0.005;
+      const dy = (e.touches[0].clientY - dragStart.y) * 0.005;
+      camRotY += dx;
+      camRotX = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, camRotX + dy));
+      dragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      updateCamera();
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      camZoom = Math.max(3, Math.min(25, camZoom + (lastTouchDist - dist) * 0.05));
+      lastTouchDist = dist;
+      updateCamera();
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', () => {
+    isDragging = false;
+    setTimeout(() => { if (!isDragging) autoRotate = true; }, 2000);
+  });
+
+  onResize();
+
+  (function animate() {
+    requestAnimationFrame(animate);
+    elapsed += 0.016;
+    if (autoRotate) { camRotY += autoRotSpeed; updateCamera(); }
+    // Wasp animation
+    animatedWasps.forEach(w => {
+      if (!w.mesh.visible) return;
+      const o = w.orbit, t = elapsed * o.speed + o.phase;
+      w.mesh.position.set(Math.cos(t) * o.radius, o.height + Math.sin(elapsed * o.bobSpeed + o.phase) * o.bobAmount, Math.sin(t) * o.radius);
+      w.mesh.rotation.y = -t + Math.PI / 2; w.mesh.rotation.x = o.tilt;
+      if (w.mesh.children[2]) w.mesh.children[2].rotation.z = 0.2 + Math.sin(elapsed * 25 + o.phase) * 0.3;
+      if (w.mesh.children[3]) w.mesh.children[3].rotation.z = -0.2 - Math.sin(elapsed * 25 + o.phase) * 0.3;
+    });
+    renderer.render(scene, camera);
+  })();
+}
+
+function updateCamera() {
+  if (!camera) return;
+  const dist = 20;
+  const x = Math.sin(camRotY) * Math.cos(camRotX) * dist;
+  const y = Math.sin(camRotX) * dist;
+  const z = Math.cos(camRotY) * Math.cos(camRotX) * dist;
+  camera.position.set(x + camPanX, y + camPanY, z);
+  camera.lookAt(camPanX + camTarget[0], camPanY + camTarget[1], camTarget[2]);
+
+  const vp = document.getElementById('viewport');
+  if (!vp) return;
+  const w = vp.clientWidth, h = vp.clientHeight;
+  if (w === 0 || h === 0) return;
+  const a = w / h;
+  camera.left = -camZoom * a; camera.right = camZoom * a;
+  camera.top = camZoom; camera.bottom = -camZoom;
+  camera.updateProjectionMatrix();
+}
+
+function onResize() {
+  const vp = document.getElementById('viewport');
+  if (!vp || !renderer) return;
+  const w = vp.clientWidth, h = vp.clientHeight;
+  if (w === 0 || h === 0) return;
+  renderer.setSize(w, h);
+  updateCamera();
+}
+
+function loadModel(key) {
+  if (!modelGroup) return;
+  while (modelGroup.children.length) modelGroup.remove(modelGroup.children[0]);
+  animatedWasps = [];
+  lifecycleMeshes = [];
+  scene.background = new THREE.Color(currentTheme.bg);
+  const spec = SPECS[key];
+  if (spec) {
+    spec.fn(modelGroup);
+    applyMode();
+    if (sectionEnabled) applySection();
+    // Reset camera to spec defaults
+    camTarget = spec.tgt || [0, 0, 0];
+    camPanX = 0; camPanY = 0;
+    // Derive rotation from cam position
+    const c = spec.cam;
+    camRotY = Math.atan2(c[0], c[2]);
+    camRotX = Math.atan2(c[1], Math.sqrt(c[0] * c[0] + c[2] * c[2]));
+    updateCamera();
+  }
+}
+
+function applyMode() {
+  const toRemove = [];
+  modelGroup.traverse(ch => { if(ch.userData._modeOverlay) toRemove.push(ch); });
+  toRemove.forEach(ch => ch.parent.remove(ch));
+  lifecycleMeshes = lifecycleMeshes.filter(m => !m.userData._modeOverlay);
+  modelGroup.traverse(ch => { if(ch.isMesh && ch.userData._hidden) { ch.visible=true; ch.userData._hidden=false; } });
+  if (currentMode === 'xray') return;
+  const isDark = currentTheme.bg < 0x888888;
+  const edgeColor = isDark ? 0x888888 : 0x333333;
+  if (currentMode === 'ghosted') {
+    modelGroup.traverse(ch => {
+      if(!ch.isMesh||!ch.geometry) return;
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(ch.geometry,15), new THREE.LineBasicMaterial({color:edgeColor,transparent:true,opacity:0.15}));
+      edges.position.copy(ch.position);edges.rotation.copy(ch.rotation);edges.scale.copy(ch.scale);
+      edges.userData._modeOverlay=true;
+      if(ch.userData.lc){edges.userData.lc=ch.userData.lc;lifecycleMeshes.push(edges);}
+      ch.parent.add(edges);
+    });
+  }
+}
+
+function applySection() {
+  modelGroup.traverse(ch => {
+    if(ch.isMesh && ch.material) {
+      ch.material.clippingPlanes = sectionEnabled ? [clipPlane] : [];
+      ch.material.needsUpdate = true;
+    }
+  });
+}
+
+// ═══ NAVIGATION ═══
+function goHome() {
+  currentPage = 'home'; currentKey = null;
+  render();
+}
+
+function goDetail(key) {
+  currentPage = 'detail'; currentKey = key;
+  render();
+  // Init Three after DOM is ready
+  requestAnimationFrame(() => {
+    if (!renderer) initThree(); else {
+      const vp = document.getElementById('viewport');
+      if (vp && !vp.querySelector('canvas')) vp.appendChild(renderer.domElement);
+      onResize();
+    }
+    loadModel(key);
+  });
+}
+
+function toggleTree() {
+  showTree = !showTree;
+  document.getElementById('tree-overlay').style.display = showTree ? 'flex' : 'none';
+  document.getElementById('tree-toggle').className = 'icon-btn' + (showTree ? ' active' : '');
+  if (showTree) renderTree();
+}
+
+function openCrossbreed() {
+  showCrossbreed = true;
+  document.getElementById('crossbreed-modal').style.display = 'flex';
+  renderCrossbreedModal();
+}
+
+function closeCrossbreed() {
+  showCrossbreed = false;
+  document.getElementById('crossbreed-modal').style.display = 'none';
+}
+
+// ═══ SCORE DISPLAY ═══
+function scoreBar(scores) {
+  const total = (scores.death + scores.waste + scores.labor + scores.supply) / 4;
+  const pct = Math.round(total * 10);
+  return `<span style="font-size:13px;letter-spacing:0.1em;color:${pct>6?'#33DD33':pct>3?'#FFB830':'#E91E8C'}">${pct}/10</span>`;
+}
+
+function scoreDetail(scores) {
+  const items = [['DEATH PLAN',scores.death],['WASTE',scores.waste],['LABOR',scores.labor],['SUPPLY',scores.supply]];
+  return items.map(([k,v])=>`<span style="color:${v>6?'#33DD33':v>3?'#FFB830':'#E91E8C'}">${k}: ${v}/10</span>`).join('  ');
+}
+
+// ═══ RENDER ═══
+function render() {
+  const main = document.getElementById('main-content');
+  const bc = document.getElementById('breadcrumb');
+
+  if (currentPage === 'home') {
+    bc.innerHTML = '<span class="current">SPECIMENS</span>';
+    main.innerHTML = `
+      <div class="home">
+        <div class="home-subtitle">SELECT A SPECIMEN TO ANALYZE</div>
+        <div class="specimen-grid" id="home-grid"></div>
+      </div>
+    `;
+    const grid = document.getElementById('home-grid');
+    [...BASE_SPECIMENS, 'more'].forEach(key => {
+      if (key === 'more') {
+        const card = document.createElement('div');
+        card.className = 'specimen-card disabled';
+        card.innerHTML = `<div class="card-name" style="color:#888">MORE COMING</div><div class="card-arch">...</div><div style="height:140px;display:flex;align-items:center;justify-content:center;color:#555;font-size:24px">+</div>`;
+        grid.appendChild(card);
+        return;
+      }
+      const spec = SPECS[key];
+      const scores = VALUE_SCORES[key];
+      const card = document.createElement('div');
+      card.className = 'specimen-card';
+      card.onclick = () => goDetail(key);
+      card.innerHTML = `
+        <div class="card-name">${spec.name}</div>
+        <div class="card-arch">${spec.arch}</div>
+        <div style="height:140px;border:1px solid #f4f4f4;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px;letter-spacing:0.1em">CLICK TO VIEW</div>
+        <div class="card-score">${scoreBar(scores)}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  if (currentPage === 'detail') {
+    const spec = SPECS[currentKey];
+    const isLC = spec.isLifecycle;
+    const breeding = BREEDING[currentKey];
+    const scores = VALUE_SCORES[currentKey];
+
+    // Breadcrumb
+    const isBase = BASE_SPECIMENS.includes(currentKey);
+    const isHybrid = HYBRID_SPECIMENS.includes(currentKey);
+    if (isBase || currentKey === 'lifecycle') {
+      bc.innerHTML = `<span onclick="goHome()">SPECIMENS</span><span class="sep">›</span><span class="current">${spec.name}</span>`;
+    } else if (isHybrid) {
+      const parentKey = currentKey === 'hybrid' ? 'h100' : 'manhattan';
+      bc.innerHTML = `<span onclick="goHome()">SPECIMENS</span><span class="sep">›</span><span onclick="goDetail('${parentKey}')">${SPECS[parentKey].name}</span><span class="sep">›</span><span class="current">${spec.name}</span>`;
+    } else {
+      bc.innerHTML = `<span onclick="goHome()">SPECIMENS</span><span class="sep">›</span><span class="current">${spec.name}</span>`;
+    }
+
+    main.innerHTML = `
+      <div class="detail">
+        <div class="detail-header">
+          <div style="display:flex;align-items:baseline">
+            <span class="detail-name">${spec.name}</span>
+            <span class="detail-arch">${spec.arch}</span>
+            <span style="margin-left:16px;font-size:9px;color:#555">${scoreDetail(scores)}</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            ${!isLC && breeding && breeding.partners.length > 0 ? `<button class="crossbreed-btn" onclick="openCrossbreed()">× CROSS-BREED</button>` : ''}
+            ${currentKey === 'wasp_nest' ? `<button class="style-btn" onclick="goDetail('lifecycle')">LIFECYCLE</button>` : ''}
+          </div>
+        </div>
+        <div class="style-bar" id="stylebar"></div>
+        ${isLC ? '' : `<div class="col-headers"><span style="color:#555">WHAT IT CAME FROM:</span><span style="color:#888">WHAT IT IS NOW:</span><span style="color:#555">WHAT IT WILL BECOME:</span></div>`}
+        <div class="triptych" id="triptych">
+          <div class="model-wrap" style="width:${isLC?'70%':'35%'}"><div id="viewport"></div></div>
+          <svg id="lines-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none"></svg>
+          <div class="rows" id="rows"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="bottom" id="bottom-section"></div>
+      </div>
+    `;
+
+    renderStyleBar();
+    renderRows(spec, isLC);
+    renderBottom(spec, isLC);
+  }
+}
+
+function renderStyleBar() {
+  const bar = document.getElementById('stylebar');
+  if (!bar) return;
+  bar.innerHTML = '';
+  // View
+  const vLabel = document.createElement('span'); vLabel.style.cssText='font-size:9px;letter-spacing:0.12em;color:#666;text-transform:uppercase'; vLabel.textContent='VIEW:'; bar.appendChild(vLabel);
+  [['constitutional','CONSTITUTIONAL'],['monochrome','MONOCHROME']].forEach(([k,label])=>{
+    const btn = document.createElement('button'); btn.className='style-btn'+(currentTheme===THEMES[k]?' active':''); btn.textContent=label;
+    btn.onclick=()=>{currentTheme=THEMES[k];if(currentKey)goDetail(currentKey);}; bar.appendChild(btn);
+  });
+  // Sep
+  const sep = document.createElement('span'); sep.style.cssText='width:1px;height:10px;background:#ddd;margin:0 6px'; bar.appendChild(sep);
+  // Mode
+  const mLabel = document.createElement('span'); mLabel.style.cssText='font-size:9px;letter-spacing:0.12em;color:#666;text-transform:uppercase'; mLabel.textContent='MODE:'; bar.appendChild(mLabel);
+  [['xray','X-RAY'],['ghosted','GHOSTED']].forEach(([k,label])=>{
+    const btn = document.createElement('button'); btn.className='style-btn'+(currentMode===k?' active':''); btn.textContent=label;
+    btn.onclick=()=>{currentMode=k;if(currentKey){loadModel(currentKey);}}; bar.appendChild(btn);
+  });
+  // Sep
+  const sep2 = document.createElement('span'); sep2.style.cssText='width:1px;height:10px;background:#ddd;margin:0 6px'; bar.appendChild(sep2);
+  // Section
+  const secBtn = document.createElement('button'); secBtn.className='style-btn'+(sectionEnabled?' active':''); secBtn.textContent='SECTION';
+  secBtn.onclick=()=>{sectionEnabled=!sectionEnabled;applySection();renderStyleBar();}; bar.appendChild(secBtn);
+  if (sectionEnabled) {
+    const slider = document.createElement('input'); slider.type='range'; slider.min='-8'; slider.max='8'; slider.step='0.1'; slider.value=clipPlane.constant;
+    slider.style.cssText='width:60px;height:3px;accent-color:#555;cursor:pointer;margin-left:4px';
+    slider.oninput=e=>{clipPlane.constant=parseFloat(e.target.value);}; bar.appendChild(slider);
+  }
+}
+
+function renderRows(spec, isLC) {
+  const rowsEl = document.getElementById('rows');
+  if (!rowsEl || isLC) return;
+  rowsEl.innerHTML = '';
+  spec.rows.forEach(row => {
+    const c = COLORS[row.cat];
+    const allVoid = row.right.every(t=>t.includes('?'));
+    const wrap = document.createElement('div'); wrap.className='row-wrap'; wrap.dataset.color=c; wrap.dataset.void=allVoid?'true':'false';
+    const label = document.createElement('div'); label.className='row-label'; label.style.color=c; label.textContent=row.label; wrap.appendChild(label);
+    const strip = document.createElement('div'); strip.className='strip';
+    const leftG = document.createElement('div'); leftG.className='panel-group panel-left'; leftG.style.border=`1px solid ${c}`;
+    row.left.forEach(t=>{const lines=t.split('\n');const cell=document.createElement('div');cell.className='cell';cell.style.border=`1px solid ${c}`;cell.innerHTML=`<div class="cell-title" style="color:${c}">${lines[0]}</div>${lines[1]?`<div class="cell-desc">${lines[1]}</div>`:''}`;leftG.appendChild(cell);});
+    strip.appendChild(leftG);
+    strip.appendChild(Object.assign(document.createElement('div'),{className:'spacer'}));
+    const rightG = document.createElement('div'); rightG.className='panel-group panel-right'; rightG.style.border=`1px solid ${allVoid?'#ddd':c}`;
+    row.right.forEach(t=>{const isEmpty=t.includes('?');const lines=t.split('\n');const cell=document.createElement('div');cell.className='cell';cell.style.border=`1px solid ${isEmpty?'#e0e0e0':c}`;cell.style.background=isEmpty?'#fafafb':'#fff';if(isEmpty){cell.innerHTML=`<div class="cell-title" style="color:#777">${lines[0]}</div><div class="cell-void">?</div>`;}else{cell.innerHTML=`<div class="cell-title" style="color:${c}">${lines[0]}</div>${lines[1]?`<div class="cell-desc">${lines[1]}</div>`:''}`;}rightG.appendChild(cell);});
+    strip.appendChild(rightG);
+    wrap.appendChild(strip); rowsEl.appendChild(wrap);
+  });
+}
+
+function renderBottom(spec, isLC) {
+  const el = document.getElementById('bottom-section');
+  if (!el) return;
+  if (isLC) {
+    const stages=[{t:0,label:'RAW MATERIALS',color:'#E91E8C'},{t:0.12,label:'HARVEST',color:'#33DD33'},{t:0.22,label:'FIRST BUILD',color:'#33DD33'},{t:0.38,label:'GROWTH',color:'#E91E8C'},{t:0.55,label:'PEAK COLONY',color:'#FFB830'},{t:0.72,label:'DECLINE',color:'#FFB830'},{t:0.82,label:'ABANDON',color:'#888'},{t:0.88,label:'FALL',color:'#888'},{t:0.93,label:'DECOMPOSE',color:'#E91E8C'},{t:1.0,label:'RETURN',color:'#E91E8C'}];
+    el.innerHTML=`<div style="padding:4px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:10px;letter-spacing:0.2em;color:#555;font-weight:500">LIFESPAN:</span><span id="lc-stage" style="font-size:13px;letter-spacing:0.15em;font-weight:600"></span><span style="font-size:10px;letter-spacing:0.2em;color:#555;font-weight:500">DEATH:</span></div><input type="range" id="lc-scrubber" min="0" max="1" step="0.005" value="${lifecycleT}" style="width:100%;height:6px;cursor:pointer;accent-color:#555;margin:0"><div style="display:flex;justify-content:space-between;margin-top:3px">${stages.map(s=>`<span style="font-size:8px;letter-spacing:0.06em;color:${s.color};text-transform:uppercase;cursor:pointer" onclick="document.getElementById('lc-scrubber').value=${s.t};updateLifecycle(${s.t});document.getElementById('lc-stage').textContent='${s.label}';document.getElementById('lc-stage').style.color='${s.color}'">${s.label}</span>`).join('')}</div></div>`;
+    const scrubber=document.getElementById('lc-scrubber'),stageLabel=document.getElementById('lc-stage');
+    const currentStage=stages.reduce((best,s)=>lifecycleT>=s.t?s:best,stages[0]);
+    stageLabel.textContent=currentStage.label;stageLabel.style.color=currentStage.color;
+    scrubber.oninput=e=>{const v=parseFloat(e.target.value);updateLifecycle(v);const st=stages.reduce((best,s)=>v>=s.t?s:best,stages[0]);stageLabel.textContent=st.label;stageLabel.style.color=st.color;};
+  } else {
+    el.innerHTML=`<div class="bottom-grid"><div><div class="section-label">MANIFESTO:</div><div class="manifesto-text">${spec.manifesto}</div></div><div><div class="section-label">VALUE SYSTEM LEDGER:</div><div id="ledger"></div></div></div>`;
+    const ledgerEl=document.getElementById('ledger');
+    if(ledgerEl) spec.ledger.forEach(([k,v,hl])=>{const row=document.createElement('div');row.className='ledger-row'+(hl?' hl':'');row.innerHTML=`<div class="ledger-key">${k}</div><div class="ledger-val">${v}</div>`;ledgerEl.appendChild(row);});
+  }
+}
+
+// ═══ CROSSBREED MODAL ═══
+function renderCrossbreedModal() {
+  const el = document.getElementById('modal-content');
+  const breeding = BREEDING[currentKey];
+  if (!breeding) return;
+  let cards = '';
+  // Show available partners
+  breeding.partners.forEach(pk => {
+    const pSpec = SPECS[pk];
+    const resultKey = breeding.results[pk];
+    cards += `<div class="modal-card" onclick="closeCrossbreed();goDetail('${resultKey}')"><div class="modal-card-name">${pSpec.name}</div><div class="modal-card-sub">→ ${SPECS[resultKey].name}</div></div>`;
+  });
+  // Show grayed-out unavailable ones
+  const unavailable = BASE_SPECIMENS.filter(k => k !== currentKey && !breeding.partners.includes(k));
+  unavailable.forEach(k => {
+    if (k === 'wasp_nest' && !BASE_SPECIMENS.includes(currentKey)) return;
+    cards += `<div class="modal-card disabled"><div class="modal-card-name">${SPECS[k]?.name || k}</div><div class="modal-card-sub">COMING SOON</div></div>`;
+  });
+  el.innerHTML = `<div class="modal-title">CROSS-BREED ${SPECS[currentKey].name} WITH:</div><div class="modal-cards">${cards}</div><button class="modal-close" onclick="closeCrossbreed()">CANCEL</button>`;
+}
+
+// ═══ FAMILY TREE ═══
+function renderTree() {
+  const svg = document.getElementById('tree-svg');
+  if (!svg) return;
+  svg.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // Nodes
+  const nodes = {
+    wasp_nest: { x:400, y:60, label:'WASP NEST', score:VALUE_SCORES.wasp_nest },
+    h100: { x:200, y:60, label:'NVIDIA H100', score:VALUE_SCORES.h100 },
+    manhattan: { x:600, y:60, label:'MANHATTAN GRID', score:VALUE_SCORES.manhattan },
+    hybrid: { x:250, y:220, label:'H100 × WASP NEST', score:VALUE_SCORES.hybrid },
+    manhattan_hybrid: { x:550, y:220, label:'MANHATTAN × WASP NEST', score:VALUE_SCORES.manhattan_hybrid },
+    h100_manhattan: { x:400, y:220, label:'H100 × MANHATTAN', score:null },
+    convergence: { x:400, y:380, label:'SEASONAL DATA CENTER', score:VALUE_SCORES.convergence },
+  };
+
+  // Edges
+  const edges = [
+    { from:'h100', to:'hybrid', color:'#E91E8C', solid:true },
+    { from:'wasp_nest', to:'hybrid', color:'#33DD33', solid:true },
+    { from:'manhattan', to:'manhattan_hybrid', color:'#E91E8C', solid:true },
+    { from:'wasp_nest', to:'manhattan_hybrid', color:'#33DD33', solid:true },
+    { from:'h100', to:'h100_manhattan', color:'#ccc', solid:false },
+    { from:'manhattan', to:'h100_manhattan', color:'#ccc', solid:false },
+    { from:'hybrid', to:'convergence', color:'#E91E8C', solid:true },
+    { from:'manhattan_hybrid', to:'convergence', color:'#33DD33', solid:true },
+  ];
+
+  // Draw edges
+  edges.forEach(e => {
+    const f = nodes[e.from], t = nodes[e.to];
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', f.x); line.setAttribute('y1', f.y + 20);
+    line.setAttribute('x2', t.x); line.setAttribute('y2', t.y - 20);
+    line.setAttribute('stroke', e.color); line.setAttribute('stroke-width', e.solid ? '1.5' : '1');
+    if (!e.solid) line.setAttribute('stroke-dasharray', '4 3');
+    line.setAttribute('opacity', e.solid ? '0.5' : '0.25');
+    svg.appendChild(line);
+  });
+
+  // Draw nodes
+  Object.entries(nodes).forEach(([key, n]) => {
+    const exists = n.score !== null;
+    const g = document.createElementNS(ns, 'g');
+    g.style.cursor = exists ? 'pointer' : 'default';
+    if (exists) g.onclick = () => { toggleTree(); goDetail(key); };
+
+    // Box
+    const rect = document.createElementNS(ns, 'rect');
+    const w = 140, h = 36;
+    rect.setAttribute('x', n.x - w/2); rect.setAttribute('y', n.y - h/2);
+    rect.setAttribute('width', w); rect.setAttribute('height', h);
+    rect.setAttribute('fill', '#fff'); rect.setAttribute('stroke', exists ? '#1a1a1a' : '#ddd');
+    rect.setAttribute('stroke-width', '1');
+    if (!exists) rect.setAttribute('stroke-dasharray', '3 2');
+    g.appendChild(rect);
+
+    // Label
+    const text = document.createElementNS(ns, 'text');
+    text.setAttribute('x', n.x); text.setAttribute('y', n.y - 2);
+    text.setAttribute('text-anchor', 'middle'); text.setAttribute('font-family', "'Spline Sans Mono',monospace");
+    text.setAttribute('font-size', '7'); text.setAttribute('letter-spacing', '0.12em');
+    text.setAttribute('fill', exists ? '#1a1a1a' : '#ccc'); text.setAttribute('font-weight', '600');
+    text.textContent = n.label;
+    g.appendChild(text);
+
+    // Score
+    if (n.score) {
+      const total = Math.round((n.score.death+n.score.waste+n.score.labor+n.score.supply)/4*10)/10;
+      const scoreText = document.createElementNS(ns, 'text');
+      scoreText.setAttribute('x', n.x); scoreText.setAttribute('y', n.y + 11);
+      scoreText.setAttribute('text-anchor', 'middle'); scoreText.setAttribute('font-family', "'Spline Sans Mono',monospace");
+      scoreText.setAttribute('font-size', '6'); scoreText.setAttribute('letter-spacing', '0.1em');
+      scoreText.setAttribute('fill', total>6?'#33DD33':total>3?'#FFB830':'#E91E8C');
+      scoreText.textContent = `${total}/10`;
+      g.appendChild(scoreText);
+    } else {
+      const coming = document.createElementNS(ns, 'text');
+      coming.setAttribute('x', n.x); coming.setAttribute('y', n.y + 11);
+      coming.setAttribute('text-anchor', 'middle'); coming.setAttribute('font-family', "'Spline Sans Mono',monospace");
+      coming.setAttribute('font-size', '5.5'); coming.setAttribute('fill', '#ddd');
+      coming.textContent = 'COMING SOON';
+      g.appendChild(coming);
+    }
+
+    svg.appendChild(g);
+  });
+
+  // Generation labels
+  [['GENERATION 0', 40], ['GENERATION 1', 200], ['GENERATION 2', 360]].forEach(([label, y]) => {
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', 30); t.setAttribute('y', y);
+    t.setAttribute('font-family', "'Spline Sans Mono',monospace"); t.setAttribute('font-size', '6');
+    t.setAttribute('fill', '#ddd'); t.setAttribute('letter-spacing', '0.1em');
+    t.textContent = label;
+    svg.appendChild(t);
+  });
+}
+
+// Make functions available globally
+window.goHome = goHome;
+window.goDetail = goDetail;
+window.toggleTree = toggleTree;
+window.openCrossbreed = openCrossbreed;
+window.closeCrossbreed = closeCrossbreed;
+window.updateLifecycle = updateLifecycle;
+
+// ═══ INIT ═══
+window.addEventListener('load', () => {
+  render();
+  window.addEventListener('resize', () => { onResize(); });
+});
+</script>
+</body>
+</html>
