@@ -3,96 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WHAT DOES _____ BELIEVE IN?</title>
+<title>CONSTITUTION READER</title>
 <link href="https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { height:100%; overflow:hidden; }
-  body { background:#fff; color:#1a1a1a; font-family:'Spline Sans Mono',monospace; display:flex; flex-direction:column; height:100vh; }
+  body { background:#fff; color:#1a1a1a; font-family:'Spline Sans Mono',monospace; display:flex; flex-direction:column; height:100vh; border:14px solid #FCFF68; }
 
   /* TOP BAR */
-  .topbar { display:flex; justify-content:space-between; align-items:center; padding:14px 28px 10px; flex-shrink:0; }
-  .topbar-title { font-size:13px; letter-spacing:0.35em; font-weight:500; cursor:pointer; }
-  .topbar-right { display:flex; gap:12px; align-items:center; }
-  .icon-btn { background:none; border:1px solid #999; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#555; padding:5px 12px; transition:all 0.15s; }
-  .icon-btn.active { color:#1a1a1a; border-color:#1a1a1a; }
-  .icon-btn:hover { color:#555; border-color:#555; }
-
-  /* BREADCRUMB */
-  .breadcrumb { padding:0 28px 8px; font-size:10px; letter-spacing:0.12em; color:#777; flex-shrink:0; display:flex; gap:6px; align-items:center; }
-  .breadcrumb span { cursor:pointer; transition:color 0.15s; }
-  .breadcrumb span:hover { color:#888; }
-  .breadcrumb .sep { color:#888; cursor:default; }
-  .breadcrumb .current { color:#1a1a1a; font-weight:600; }
+  .topbar { display:flex; justify-content:space-between; align-items:flex-start; padding:18px 28px 14px; flex-shrink:0; }
+  .topbar-title { font-size:13px; letter-spacing:0.35em; font-weight:500; cursor:pointer; padding-top:2px; transition:color 0.15s; user-select:none; }
+  .topbar-title:hover { color:#666; }
+  .topbar-back-arrow { display:inline-block; margin-right:8px; opacity:0.55; transition:transform 0.15s, opacity 0.15s; }
+  .topbar-title:hover .topbar-back-arrow { opacity:1; transform:translateX(-3px); }
+  .topbar-meta { display:flex; flex-direction:column; gap:2px; align-items:flex-end; font-size:10px; letter-spacing:0.15em; }
+  .topbar-meta-line { white-space:nowrap; font-weight:500; }
 
   /* HOME PAGE */
-  .home { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:24px; }
-  .home-subtitle { font-size:13px; letter-spacing:0.2em; color:#666; margin-bottom:32px; text-transform:uppercase; }
+  .home { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:24px; gap:64px; }
+  .home-tagline { font-size:13px; letter-spacing:0.18em; color:#555; text-transform:uppercase; max-width:840px; text-align:center; line-height:2; }
+  .home-tagline .line2 { color:#1a1a1a; margin-top:4px; }
   .specimen-grid { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; }
-  .specimen-card { border:1px solid #eee; padding:20px; width:220px; cursor:pointer; transition:all 0.2s; text-align:center; }
-  .specimen-card:hover { border-color:#1a1a1a; }
-  .specimen-card.disabled { opacity:0.35; cursor:default; pointer-events:none; }
-  .card-name { font-size:14px; letter-spacing:0.2em; font-weight:600; margin-bottom:4px; }
-  .card-arch { font-size:12px; letter-spacing:0.15em; color:#666; margin-bottom:12px; }
-  .card-viewport { width:180px; height:140px; margin:0 auto 12px; }
+  .specimen-card { border:1px solid #1a1a1a; padding:24px; width:240px; cursor:pointer; transition:all 0.2s; text-align:center; background:#fff; }
+  .specimen-card:hover { background:#FCFF68; }
+  .card-name { font-size:16px; letter-spacing:0.2em; font-weight:600; margin-bottom:6px; }
+  .card-arch { font-size:11px; letter-spacing:0.2em; color:#888; margin-bottom:18px; }
+  .card-cta { height:120px; border:1px solid #f0f0f0; margin-bottom:14px; display:flex; align-items:center; justify-content:center; color:#888; font-size:11px; letter-spacing:0.2em; }
   .card-score { font-size:13px; letter-spacing:0.1em; color:#777; }
 
   /* DETAIL PAGE */
   .detail { flex:1; display:flex; flex-direction:column; min-height:0; }
-  .detail-header { display:flex; justify-content:space-between; align-items:center; padding:0 28px 8px; flex-shrink:0; }
-  .detail-name { font-size:18px; letter-spacing:0.2em; font-weight:600; }
-  .detail-arch { font-size:13px; letter-spacing:0.15em; color:#666; margin-left:12px; }
-  .crossbreed-btn { background:none; border:1px solid #E91E8C; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#E91E8C; padding:5px 14px; transition:all 0.15s; }
-  .crossbreed-btn:hover { background:#E91E8C; color:#fff; }
-  .style-bar { display:flex; gap:10px; align-items:center; justify-content:flex-start; padding:0 28px 6px; flex-shrink:0; }
-  .style-btn { background:none; border:1px solid #bbb; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#666; padding:4px 12px; transition:all 0.15s; }
-  .style-btn.active { color:#1a1a1a; border-color:#1a1a1a; }
-  .style-btn:hover { color:#666; border-color:#555; }
-  .col-headers { display:flex; justify-content:space-between; padding:0 40px 6px; font-size:10px; letter-spacing:0.2em; font-weight:500; flex-shrink:0; }
-  .triptych { flex:1; position:relative; padding:0 24px; display:flex; flex-direction:column; min-height:0; }
-  .model-wrap { position:absolute; left:50%; top:0; transform:translateX(-50%); width:35%; height:100%; z-index:2; pointer-events:none; }
-  #viewport { width:100%; height:100%; pointer-events:auto; }
-  .rows { flex:1; display:flex; flex-direction:column; justify-content:center; gap:14px; position:relative; z-index:1; }
-  .row-wrap { position:relative; }
-  .row-label { font-size:13px; letter-spacing:0.15em; font-weight:500; margin-bottom:3px; }
-  .strip { display:flex; align-items:center; width:100%; }
-  .panel-group { display:flex; gap:2px; padding:3px; flex-shrink:0; }
-  .cell { width:100px; min-height:65px; padding:6px 6px; display:flex; flex-direction:column; justify-content:center; flex-shrink:0; }
-  .cell-title { font-size:10px; font-weight:600; letter-spacing:0.1em; line-height:1.25; }
-  .cell-desc { font-size:8px; color:#666; margin-top:2px; line-height:1.35; }
-  .cell-void { text-align:center; font-size:20px; color:#888; font-weight:300; line-height:1; }
-  .spacer { flex:1; }
-  #lines-svg { position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
-  .divider { height:1px; background:#ddd; flex-shrink:0; margin:0 24px; }
-  .bottom { flex-shrink:0; padding:8px 24px; }
-  .bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  .section-label { font-size:10px; letter-spacing:0.2em; color:#666; margin-bottom:4px; font-weight:500; }
-  .manifesto-text { font-size:14px; line-height:1.6; color:#777; }
-  .ledger-row { display:grid; grid-template-columns:1fr 2fr; border-bottom:1px solid #f0f0f0; }
-  .ledger-row.hl { background:#FFF5F5; }
-  .ledger-key { padding:3px 6px; font-size:9px; letter-spacing:0.1em; color:#666; }
-  .ledger-val { padding:3px 6px; font-size:12px; color:#777; }
-  .ledger-row.hl .ledger-key { color:#E91E8C; font-weight:600; }
-  .ledger-row.hl .ledger-val { color:#C41070; font-weight:600; }
-  .footer { flex-shrink:0; padding:5px 24px; display:flex; justify-content:space-between; font-size:9px; letter-spacing:0.15em; color:#888; }
+  .cr-main { flex:1; position:relative; min-height:0; }
+  .cr-card { position:absolute; top:4px; left:28px; width:320px; z-index:10; display:flex; flex-direction:column; border:1px solid #1a1a1a; background:#fff; }
+  .cr-card-header { padding:16px 20px 14px; border-bottom:1px solid #1a1a1a; }
+  .cr-card-title { font-size:18px; letter-spacing:0.16em; font-weight:600; color:#1a1a1a; }
+  .cr-card-arch { font-size:10px; letter-spacing:0.22em; color:#888; margin-top:4px; }
+  .cr-card-body { padding:14px 20px 18px; }
+  .cr-card-label { font-size:9px; letter-spacing:0.28em; color:#888; margin-bottom:10px; }
+  .cr-card-line { font-size:12px; line-height:1.5; color:#1a1a1a; display:flex; gap:12px; padding:8px 0; border-top:1px solid #f0f0f0; }
+  .cr-card-line:first-of-type { border-top:none; padding-top:0; }
+  .cr-card-num { color:#aaa; font-weight:500; min-width:22px; flex-shrink:0; }
+  .cr-card-text { color:#1a1a1a; }
 
-  /* CROSSBREED MODAL */
-  .modal-overlay { position:fixed; inset:0; background:rgba(255,255,255,0.92); z-index:100; display:flex; justify-content:center; align-items:center; }
-  .modal { text-align:center; }
-  .modal-title { font-size:12px; letter-spacing:0.2em; color:#555; margin-bottom:20px; }
-  .modal-cards { display:flex; gap:20px; justify-content:center; }
-  .modal-card { border:1px solid #eee; padding:16px 24px; cursor:pointer; transition:all 0.2s; }
-  .modal-card:hover { border-color:#E91E8C; }
-  .modal-card.disabled { opacity:0.3; cursor:default; border-color:#555; }
-  .modal-card-name { font-size:12px; letter-spacing:0.15em; font-weight:600; margin-bottom:4px; }
-  .modal-card-sub { font-size:13px; color:#666; letter-spacing:0.1em; }
-  .modal-close { margin-top:20px; background:none; border:none; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:12px; color:#777; letter-spacing:0.1em; }
+  .cr-canvas-area { position:absolute; inset:0; }
+  .cr-canvas-area #viewport { position:absolute; inset:0; }
 
-  /* FAMILY TREE OVERLAY */
-  .tree-overlay { position:fixed; inset:0; background:rgba(255,255,255,0.96); z-index:90; display:flex; justify-content:center; align-items:center; }
-  .tree-close { position:absolute; top:20px; right:28px; background:none; border:none; cursor:pointer; font-family:'Spline Sans Mono',monospace; font-size:12px; color:#555; }
-  .tree-title { position:absolute; top:20px; left:28px; font-size:12px; letter-spacing:0.2em; color:#666; }
-  #tree-svg { width:800px; height:500px; }
+  .bottom { flex-shrink:0; padding:12px 28px 18px; }
+
+  /* ═══ RESPONSIVE — TABLET / MOBILE ═══ */
+  @media (max-width: 720px) {
+    body { border-width: 6px; }
+
+    /* Topbar — compact, both elements still visible */
+    .topbar { padding: 10px 14px 8px; }
+    .topbar-title { font-size: 10px; letter-spacing: 0.18em; }
+    .topbar-back-arrow { margin-right: 5px; }
+    .topbar-meta { font-size: 8px; letter-spacing: 0.08em; gap: 1px; }
+
+    /* Home — single column, scroll within content area */
+    .home { padding: 24px 12px 28px; gap: 24px; overflow-y: auto; justify-content: flex-start; }
+    .home-tagline { font-size: 10px; line-height: 1.7; padding: 0 6px; }
+    .specimen-grid { flex-direction: column; gap: 14px; align-items: stretch; padding: 0 14px; width: 100%; }
+    .specimen-card { width: 100%; max-width: 360px; padding: 18px; margin: 0 auto; }
+    .card-name { font-size: 14px; letter-spacing: 0.16em; }
+    .card-arch { font-size: 10px; margin-bottom: 12px; }
+    .card-cta { height: 70px; font-size: 10px; margin-bottom: 10px; }
+    .card-score { font-size: 12px; }
+
+    /* Detail card sizing on mobile (used in both orientations) */
+    .cr-card-header { padding: 12px 16px 10px; }
+    .cr-card-title { font-size: 14px; letter-spacing: 0.12em; }
+    .cr-card-arch { font-size: 9px; }
+    .cr-card-body { padding: 10px 16px 14px; }
+    .cr-card-label { font-size: 8px; margin-bottom: 8px; }
+    .cr-card-line { font-size: 11px; padding: 6px 0; gap: 8px; }
+    .cr-card-num { min-width: 20px; }
+
+    .bottom { padding: 6px 12px 10px; }
+
+    /* Hide individual stage labels on small screens — they collide; the centered
+       current-stage indicator (#lc-stage) shows the active phase. */
+    .stage-tick { display: none; }
+  }
+
+  /* Mobile PORTRAIT — stack canvas above card; canvas fills, card scrolls */
+  @media (max-width: 720px) and (orientation: portrait) {
+    .cr-main { display: flex; flex-direction: column; }
+    .cr-canvas-area {
+      position: static;
+      flex: 1 1 0;
+      min-height: 240px;
+      order: 1;
+    }
+    .cr-card {
+      position: static;
+      width: 100%;
+      left: auto;
+      top: auto;
+      max-height: 38vh;
+      overflow-y: auto;
+      order: 2;
+      border-left: none;
+      border-right: none;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Mobile LANDSCAPE — keep overlay layout but shrink the card so canvas isn't crushed */
+  @media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+    .cr-card { width: 220px; left: 14px; top: 4px; max-height: calc(100vh - 110px); overflow-y: auto; }
+  }
+
+  /* Very small (≤380px) — minimal chrome */
+  @media (max-width: 380px) {
+    body { border-width: 4px; }
+    .topbar-title { font-size: 9px; letter-spacing: 0.14em; }
+    .topbar-meta { font-size: 7px; }
+    .cr-card-line { font-size: 10px; }
+  }
 </style>
 <script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js"}}</script>
 </head>
@@ -100,35 +128,12 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar-title" onclick="goHome()">WHAT DOES _____ BELIEVE IN?</div>
-  <div class="topbar-right">
-    <button class="icon-btn" id="tree-toggle" onclick="toggleTree()">FAMILY TREE</button>
-  </div>
+  <div class="topbar-title" id="topbar-title" onclick="goHome()">CONSTITUTION READER</div>
+  <div class="topbar-meta" id="topbar-meta"></div>
 </div>
-
-<!-- BREADCRUMB -->
-<div class="breadcrumb" id="breadcrumb"></div>
 
 <!-- MAIN CONTENT -->
 <div id="main-content" style="flex:1;display:flex;flex-direction:column;min-height:0"></div>
-
-<!-- FOOTER -->
-<div class="footer">
-  <span>TECHNOLOGY DOES NOT KNOW HOW TO PLAN ITS OWN DEATH</span>
-  <span>KELSEY WANG · GSAPP 2026</span>
-</div>
-
-<!-- FAMILY TREE OVERLAY (hidden) -->
-<div class="tree-overlay" id="tree-overlay" style="display:none">
-  <div class="tree-title">CONSTITUTIONAL FAMILY TREE</div>
-  <button class="tree-close" onclick="toggleTree()">CLOSE</button>
-  <svg id="tree-svg" viewBox="0 0 800 500"></svg>
-</div>
-
-<!-- CROSSBREED MODAL (hidden) -->
-<div class="modal-overlay" id="crossbreed-modal" style="display:none">
-  <div class="modal" id="modal-content"></div>
-</div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -143,7 +148,7 @@ const THEMES = {
   constitutional: { name:'CONSTITUTIONAL', flow:0xE91E8C, flowLt:0xF54DAA, flowDk:0xC41070, agent:0x33DD33, agentLt:0x66EE66, agentDk:0x22AA22, time:0xFFB830, timeLt:0xFFCC55, timeDk:0xCC8800, base:0xAAAAAA, baseLt:0xCCCCCC, baseDk:0x888888, bg:0xffffff, envelope:0.78, envSat:0.15 },
   monochrome: { name:'MONOCHROME', flow:0x777777, flowLt:0x999999, flowDk:0x555555, agent:0x666666, agentLt:0x888888, agentDk:0x444444, time:0x999999, timeLt:0xAAAAAA, timeDk:0x777777, base:0xBBBBBB, baseLt:0xDDDDDD, baseDk:0x999999, bg:0xffffff, envelope:0.85, envSat:0.0 }
 };
-let currentTheme = THEMES.constitutional;
+let currentTheme = THEMES.monochrome;
 
 // ═══ MATERIALS (theme-aware) ═══
 const MM={flow:o=>Object.assign({color:currentTheme.flow,roughness:0.3,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide},o||{}),flowLt:o=>Object.assign({color:currentTheme.flowLt,roughness:0.25,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide},o||{}),flowDk:o=>Object.assign({color:currentTheme.flowDk,roughness:0.35,transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide},o||{}),agent:o=>Object.assign({color:currentTheme.agent,roughness:0.3,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide},o||{}),agentLt:o=>Object.assign({color:currentTheme.agentLt,roughness:0.25,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide},o||{}),agentDk:o=>Object.assign({color:currentTheme.agentDk,roughness:0.35,transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide},o||{}),time:o=>Object.assign({color:currentTheme.time,roughness:0.3,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide},o||{}),timeLt:o=>Object.assign({color:currentTheme.timeLt,roughness:0.25,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide},o||{}),timeDk:o=>Object.assign({color:currentTheme.timeDk,roughness:0.35,transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide},o||{}),base:o=>Object.assign({color:currentTheme.base,roughness:0.4,transparent:true,opacity:0.2,depthWrite:false,side:THREE.DoubleSide},o||{}),baseLt:o=>Object.assign({color:currentTheme.baseLt,roughness:0.35,transparent:true,opacity:0.15,depthWrite:false,side:THREE.DoubleSide},o||{}),baseDk:o=>Object.assign({color:currentTheme.baseDk,roughness:0.45,transparent:true,opacity:0.25,depthWrite:false,side:THREE.DoubleSide},o||{})};
@@ -160,8 +165,7 @@ function pearDeform(geo, elongate, taper) {
   const range = maxY - minY || 1;
   for (let i = 0; i < pos.count; i++) {
     let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-    const t = (y - minY) / range; // 0=bottom, 1=top
-    // Pear profile: wide at ~60% height, narrow at top and tapered at bottom
+    const t = (y - minY) / range;
     const profile = Math.sin(t * Math.PI * 0.85 + 0.2) * (0.7 + 0.5 * t) * (1 - (1 - t) * taper * 0.4);
     const xzScale = 0.5 + profile * 0.7;
     pos.setXYZ(i, x * xzScale, y * elongate, z * xzScale);
@@ -169,9 +173,7 @@ function pearDeform(geo, elongate, taper) {
   pos.needsUpdate = true; geo.computeVertexNormals();
 }
 
-function genWaspNest(g){const r=R(42);for(let l=0;l<22;l++){const rad=3.8+l*0.15,geo=new THREE.SphereGeometry(rad,48,36,0,Math.PI*2,0.08,Math.PI*0.72);displaceGeo(geo,0.12+l*0.008,1.2+l*0.15,l*3.7);const pos=geo.attributes.position;for(let i=0;i<pos.count;i++){const y=pos.getY(i);if(y<-rad*0.5){const tn=fbm(pos.getX(i)*2+l,y*2,pos.getZ(i)*2+l*0.5);pos.setY(i,y-((-y/rad)-0.5)*0.4*tn*rad*0.3);}}pos.needsUpdate=true;geo.computeVertexNormals();pearDeform(geo, 1.4, 0.6);const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({opacity:0.04+Math.random()*0.03,color:new THREE.Color().setHSL(0.1,currentTheme.envSat,currentTheme.envelope+l*0.004),transparent:true,depthWrite:false,side:THREE.DoubleSide,roughness:0.7}));m.position.y=-2;g.add(m);}const cG=new THREE.CylinderGeometry(0.22,0.22,0.35,6,1,true),cpG=new THREE.CylinderGeometry(0.20,0.20,0.04,6);[{y:0,oR:2.5},{y:-2.2,oR:3.0},{y:-4.2,oR:3.3},{y:-6,oR:2.6},{y:-7.6,oR:1.8},{y:-8.8,oR:1.0}].forEach((c,ci)=>{const cg=new THREE.Group();cg.position.y=c.y;const dG=new THREE.CylinderGeometry(c.oR,c.oR*1.03,0.08,48);displaceGeo(dG,0.08,2,ci*5);const dm=new THREE.Mesh(dG,mt('flowDk',{opacity:0.4}));dm.position.y=-0.2;cg.add(dm);const cs=0.42;for(let q=-Math.ceil(c.oR/cs)-1;q<=Math.ceil(c.oR/cs)+1;q++)for(let rr=-Math.ceil(c.oR/cs)-1;rr<=Math.ceil(c.oR/cs)+1;rr++){if(Math.abs(q+rr)>Math.ceil(c.oR/cs)+1)continue;const x=q*cs*0.87+rr*cs*0.435,z=rr*cs*0.755,d=Math.sqrt(x*x+z*z),bn=fbm(x*0.8+ci*10,z*0.8,ci*3);if(d>c.oR*(0.85+bn*0.2))continue;const cl=new THREE.Mesh(cG,mt(r()>0.6?'flow':'flowDk',{opacity:r()>0.6?0.45:0.4}));cl.position.set(x,0,z);cg.add(cl);if(r()>0.55){const cp=new THREE.Mesh(cpG,mt('time',{opacity:0.5}));cp.position.set(x,0.19,z);cg.add(cp);}}if(ci>0)for(let p=0;p<(ci<3?4:ci<5?3:2);p++){const a=(p/(ci<3?4:ci<5?3:2))*Math.PI*2+r()*0.8,pd=r()*c.oR*0.4,px=Math.cos(a)*pd,pz=Math.sin(a)*pd,gap=[0,-2.2,-4.2,-6,-7.6,-8.8][ci-1]-c.y;const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(px,0,pz),new THREE.Vector3(px+(r()-0.5)*0.3,gap*0.5,pz+(r()-0.5)*0.3),new THREE.Vector3(px+(r()-0.5)*0.2,gap,pz+(r()-0.5)*0.2)]);cg.add(new THREE.Mesh(new THREE.TubeGeometry(curve,8,0.04+r()*0.03,6,false),mt('agent',{opacity:0.45})));}g.add(cg);});const ac=new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0),new THREE.Vector3(0.1,1.5,0.05),new THREE.Vector3(-0.05,3.2,0)]);g.add(new THREE.Mesh(new THREE.TubeGeometry(ac,12,0.1,8,false),mt('agentDk',{opacity:0.5})));const pG=new THREE.CylinderGeometry(0.6,0.4,0.12,16);displaceGeo(pG,0.15,3,99);const pl=new THREE.Mesh(pG,mt('agentDk',{opacity:0.4}));pl.position.y=3.3;g.add(pl);g.position.y=2;}
-
-// ═══ WASP NEST LIFECYCLE — time-scrubbed construction and death ═══
+// ═══ WASP NEST LIFECYCLE: time-scrubbed construction and death ═══
 let lifecycleT = 0.6;
 let lifecycleMeshes = [];
 let animatedWasps = [];
@@ -187,7 +189,6 @@ function genLifecycle(g) {
     return mesh;
   };
 
-  // ── BRANCH (anchor surface) ──
   const branch = new THREE.Mesh(
     new THREE.CylinderGeometry(0.15, 0.2, 8, 8),
     mt('base', { opacity: 0.3 })
@@ -196,7 +197,6 @@ function genLifecycle(g) {
   branch.position.y = 5;
   g.add(tag(branch, 0, 0, 0.82, 0.95));
 
-  // Small branches
   for (let i = 0; i < 5; i++) {
     const sb = new THREE.Mesh(
       new THREE.CylinderGeometry(0.03, 0.06, 1 + r() * 1.5, 5),
@@ -207,13 +207,10 @@ function genLifecycle(g) {
     g.add(tag(sb, 0, 0, 0.82, 0.95));
   }
 
-  // ── RAW MATERIALS — leaves, bark strips, wood fiber ──
   for (let i = 0; i < 20; i++) {
     const a = r() * Math.PI * 2, d = 2 + r() * 4;
-    // Leaf shapes — flat irregular quads
     const leafW = 0.15 + r() * 0.25, leafH = 0.2 + r() * 0.3;
     const leafGeo = new THREE.PlaneGeometry(leafW, leafH, 3, 3);
-    // Curl the leaf
     const lpos = leafGeo.attributes.position;
     for (let v = 0; v < lpos.count; v++) {
       const lx = lpos.getX(v), ly = lpos.getY(v);
@@ -225,7 +222,6 @@ function genLifecycle(g) {
     leaf.rotation.set(r() * Math.PI, r() * Math.PI, r() * Math.PI);
     g.add(tag(leaf, 0, 0.03, 0.06, 0.22));
   }
-  // Bark strips
   for (let i = 0; i < 15; i++) {
     const a = r() * Math.PI * 2, d = 1.5 + r() * 3;
     const strip = new THREE.Mesh(
@@ -237,16 +233,13 @@ function genLifecycle(g) {
     g.add(tag(strip, 0, 0.04, 0.07, 0.2));
   }
 
-  // ── ANIMATED WASPS — orbit the nest, carry materials ──
   animatedWasps = [];
   for (let i = 0; i < 25; i++) {
     const wasp = new THREE.Group();
-    // Body — striped cone
     const body = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 5), mt('agent', { opacity: 0.7 }));
     body.rotation.x = Math.PI / 2;
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.035, 5, 4), mt('agentDk', { opacity: 0.7 }));
     head.position.z = 0.1;
-    // Wings (two)
     const wingL = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.04), mt('agentLt', { opacity: 0.25 }));
     wingL.position.set(0.06, 0.02, 0.02);
     wingL.rotation.z = 0.2;
@@ -255,7 +248,6 @@ function genLifecycle(g) {
     wingR.rotation.z = -0.2;
     wasp.add(body, head, wingL, wingR);
 
-    // Some wasps carry material
     if (i < 8) {
       const cargo = new THREE.Mesh(
         new THREE.SphereGeometry(0.025, 4, 3),
@@ -265,7 +257,6 @@ function genLifecycle(g) {
       wasp.add(cargo);
     }
 
-    // Orbit parameters
     const orbitRadius = 1.5 + r() * 4;
     const orbitHeight = -1 + r() * 6;
     const orbitSpeed = 0.3 + r() * 0.8;
@@ -283,7 +274,6 @@ function genLifecycle(g) {
     });
   }
 
-  // ── ANCHOR STALK (agent — grows from 0.12 to 0.25) ──
   const ac = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.1, 1.5, 0.05), new THREE.Vector3(-0.05, 3.2, 0)
   ]);
@@ -296,7 +286,6 @@ function genLifecycle(g) {
   plate.position.y = 3.3;
   g.add(tag(plate, 0.12, 0.3, 0.82, 0.88));
 
-  // ── COMBS + CELLS (flow — built progressively) ──
   const cellGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.35, 6, 1, true);
   const capGeo = new THREE.CylinderGeometry(0.20, 0.20, 0.04, 6);
   const combs = [{y:0,oR:2.5,t:0.18},{y:-2.2,oR:3.0,t:0.28},{y:-4.2,oR:3.3,t:0.35},{y:-6,oR:2.6,t:0.42},{y:-7.6,oR:1.8,t:0.48},{y:-8.8,oR:1.0,t:0.54}];
@@ -306,14 +295,12 @@ function genLifecycle(g) {
     const cg = new THREE.Group();
     cg.position.y = c.y;
 
-    // Disc
     const dG = new THREE.CylinderGeometry(c.oR, c.oR * 1.03, 0.08, 48);
     displaceGeo(dG, 0.08, 2, ci * 5);
     const dm = new THREE.Mesh(dG, mt('flowDk', { opacity: 0.4 }));
     dm.position.y = -0.2;
     cg.add(tag(dm, combAppear, combAppear + 0.08, 0.85, 0.95));
 
-    // Cells
     const cs = 0.42;
     let cellIdx = 0;
     for (let q = -Math.ceil(c.oR / cs) - 1; q <= Math.ceil(c.oR / cs) + 1; q++) {
@@ -324,13 +311,11 @@ function genLifecycle(g) {
         const bn = fbm(x * 0.8 + ci * 10, z * 0.8, ci * 3);
         if (dist > c.oR * (0.85 + bn * 0.2)) continue;
 
-        // Each cell appears slightly after the previous (ripple effect)
         const cellDelay = combAppear + (dist / c.oR) * 0.06;
         const cl = new THREE.Mesh(cellGeo, mt(r() > 0.6 ? 'flow' : 'flowDk', { opacity: 0.45 }));
         cl.position.set(x, 0, z);
         cg.add(tag(cl, cellDelay, cellDelay + 0.05, 0.85, 0.92 + r() * 0.06));
 
-        // Brood caps (TIME — appear later, disappear first in decline)
         if (r() > 0.55) {
           const cp = new THREE.Mesh(capGeo, mt('time', { opacity: 0.5 }));
           cp.position.set(x, 0.19, z);
@@ -340,7 +325,6 @@ function genLifecycle(g) {
       }
     }
 
-    // Petioles (agent)
     if (ci > 0) {
       for (let p = 0; p < (ci < 3 ? 4 : ci < 5 ? 3 : 2); p++) {
         const a = (p / (ci < 3 ? 4 : ci < 5 ? 3 : 2)) * Math.PI * 2 + r() * 0.8;
@@ -359,7 +343,6 @@ function genLifecycle(g) {
     g.add(cg);
   });
 
-  // ── ENVELOPE LAYERS (time — grow around, dissolve at death) ──
   for (let l = 0; l < 22; l++) {
     const rad = 3.8 + l * 0.15;
     const geo = new THREE.SphereGeometry(rad, 48, 36, 0, Math.PI * 2, 0.08, Math.PI * 0.72);
@@ -384,7 +367,6 @@ function genLifecycle(g) {
     g.add(tag(m, envAppear, envAppear + 0.1, 0.82 - l * 0.005, 0.92 - l * 0.003));
   }
 
-  // ── DECOMPOSITION FRAGMENTS (appear at death) ──
   for (let i = 0; i < 40; i++) {
     const a = r() * Math.PI * 2, d = r() * 5;
     const sz = 0.05 + r() * 0.15;
@@ -398,82 +380,70 @@ function genLifecycle(g) {
   }
 
   g.position.y = 2;
-
-  // Apply initial lifecycle state
   updateLifecycle(lifecycleT);
 }
 
 function updateLifecycle(t) {
   lifecycleT = t;
-
-  // ── FALL DEFORMATION (t > 0.82) ──
-  // Tilt, drop, and squash the whole model
-  if (modelGroup.children[0]) {
-    // Find the main content group (last child added is the nest content)
-    // Apply deformation to all children
+  // Wasp-nest-specific fall: the nest detaches and drops at end of cycle
+  if (currentKey === 'wasp_nest' && modelGroup && modelGroup.children[0]) {
     const fallProgress = ss(0.82, 0.92, t);
-    const meltProgress = ss(0.90, 1.0, t);
-
-    modelGroup.traverse(ch => {
-      if (ch === modelGroup) return;
-      // Only apply fall to non-decomposition elements
-      if (ch.userData.lc && ch.userData.lc.appear < 0.85) {
-        // Skip — handled by group transform below
-      }
-    });
-
-    // Apply fall rotation and position to the model group's first-level children
-    // Use a subtle tilt + drop
-    const nestTilt = fallProgress * 0.4;
     const nestDrop = fallProgress * 6;
-    const nestSquash = 1 - meltProgress * 0.5;
-
-    // We modify a wrapper approach - move the whole group
-    // Since modelGroup rotates, apply y offset
     modelGroup.position.y = -nestDrop;
-    modelGroup.children.forEach(ch => {
-      if (ch.userData.lc && ch.userData.lc.appear < 0.85) {
-        // These are the nest elements — apply tilt
-        // Can't easily rotate individual pieces, so just use position offset
-      }
-    });
+  } else if (modelGroup) {
+    modelGroup.position.y = 0;
   }
 
-  // ── UPDATE ELEMENT VISIBILITY ──
+  // Coral-specific: end-of-cycle global fade — fades everything still visible
+  // for a clean loop reset. Late-emerging primaries that never reached their
+  // bleach phase get caught here.
+  const coralEndFade = (currentKey === 'coral_reef' && t > 0.92)
+    ? ss(0.92, 0.99, t) : 0;
+
+  // Ise aging window — newly-built shrine pieces are light, darken over this many cycle units
+  const ISE_AGING_WINDOW = 0.20;
+
   lifecycleMeshes.forEach(mesh => {
     const lc = mesh.userData.lc;
     if (!lc) return;
 
+    // lc may be a single period object OR an array of period objects (multi-period).
+    // For multi-period, take max opacity across periods and use the active period's
+    // peak as the build-time anchor for aging.
+    const periods = Array.isArray(lc) ? lc : [lc];
     let opacity = 0;
-    if (t < lc.appear) {
-      opacity = 0;
-    } else if (t < lc.peak) {
-      opacity = ss(lc.appear, lc.peak, t);
-    } else if (t < lc.fade) {
-      opacity = 1;
-    } else if (t < lc.gone) {
-      opacity = 1 - ss(lc.fade, lc.gone, t);
-    } else {
-      opacity = 0;
+    let activePeak = -Infinity;
+    for (const p of periods) {
+      let pOp;
+      if (t < p.appear) pOp = 0;
+      else if (t < p.peak) pOp = ss(p.appear, p.peak, t);
+      else if (t < p.fade) pOp = 1;
+      else if (t < p.gone) pOp = 1 - ss(p.fade, p.gone, t);
+      else pOp = 0;
+      if (pOp > opacity || (pOp === opacity && pOp > 0 && p.peak > activePeak)) {
+        opacity = pOp;
+        activePeak = p.peak;
+      }
+    }
+
+    opacity *= (1 - coralEndFade);
+
+    // Aging color: shrine wood components start light when built and darken over time.
+    // Only applies to meshes flagged with userData.ages = true (Ise shrine wood pieces).
+    if (mesh.userData.ages && mesh.userData.baseColor && mesh.userData.lightColor && activePeak > -Infinity) {
+      const age = t - activePeak;
+      const ageFrac = Math.max(0, Math.min(1, age / ISE_AGING_WINDOW));
+      mesh.material.color.copy(mesh.userData.lightColor).lerp(mesh.userData.baseColor, ageFrac);
     }
 
     mesh.visible = opacity > 0.01;
-
-    // Handle different material types
     const mat = mesh.material;
     if (mat) {
       if (!mat.userData) mat.userData = {};
       if (mat.userData.baseOp === undefined) mat.userData.baseOp = mat.opacity !== undefined ? mat.opacity : 1;
-
-      if (mat.isLineBasicMaterial || mat.isPointsMaterial) {
-        mat.opacity = mat.userData.baseOp * opacity;
-        mat.transparent = true;
-      } else if (mat.opacity !== undefined) {
-        mat.opacity = mat.userData.baseOp * opacity;
-      }
+      if (mat.opacity !== undefined) mat.opacity = mat.userData.baseOp * opacity;
+      mat.transparent = true;
     }
-
-    // For groups (wasps), apply to children
     if (mesh.children) {
       mesh.children.forEach(ch => {
         ch.visible = opacity > 0.01;
@@ -488,550 +458,653 @@ function updateLifecycle(t) {
   });
 }
 
-function genH100(g){const r=R(55);bx(g,mt('base'),0,0,0,10,0.18,6);for(let i=0;i<24;i++)bx(g,mt('flowLt'),-4.5+i*0.38,0.1,(r()-0.5)*4.5,0.03,0.01,0.8+r()*4);bx(g,mt('baseLt'),0,0.2,0,5.5,0.22,4.2);wf(g,new THREE.BoxGeometry(5.6,0.24,4.3),0,0.2,0);bx(g,mt('agentDk'),0,0.36,0,3.8,0.1,2.8);const bks=['agent','agentLt','agentDk'];for(let x=0;x<14;x++)for(let z=0;z<10;z++){const bxx=-1.75+x*0.26,bz=-1.15+z*0.26;if(Math.abs(bxx)>1.8||Math.abs(bz)>1.3)continue;bx(g,mt(bks[(x+z)%3]),bxx,0.43,bz,0.22,0.035,0.22);}for(let i=0;i<5;i++)bx(g,mt('agentLt'),0,0.45,-1.1+i*0.55,3.5,0.02,0.06);[[-2.2,0,-1.2],[-2.2,0,0],[-2.2,0,1.2],[2.2,0,-1.2],[2.2,0,0],[2.2,0,1.2]].forEach(([hx,,hz])=>{bx(g,mt('flowDk'),hx,0.35,hz,0.7,0.08,0.7);for(let l=0;l<8;l++)bx(g,mt(l%2===0?'flow':'flowLt'),hx,0.42+l*0.04,hz,0.65,0.03,0.65);});for(let i=0;i<14;i++){bx(g,mt('flowDk'),-4.5+i*0.32,0.17,2.5,0.26,0.15,0.18);bx(g,mt('flowDk'),-4.5+i*0.32,0.17,-2.5,0.26,0.15,0.18);}for(let i=0;i<40;i++)bx(g,mt('flow'),-4+(i%20)*0.4,0.14,1.9*(i<20?1:-1),0.05,0.08,0.05);const rg=new THREE.Group();rg.position.set(0,0,-8);[[-1.75,0,-1.25],[-1.75,0,1.25],[1.75,0,-1.25],[1.75,0,1.25]].forEach(([rx,,rz])=>bx(rg,mt('agentDk'),rx,4,rz,0.08,8,0.08));for(let u=0;u<21;u++){bx(rg,mt('agent'),0,0.25+u*0.36,0,3.3,0.28,2.2);bx(rg,mt('agentDk'),0,0.25+u*0.36,-1.12,3.1,0.23,0.03);}g.add(rg);wf(g,new THREE.BoxGeometry(18,10,16),0,4,-6);const dcG=new THREE.Mesh(new THREE.BoxGeometry(18,10,16),new THREE.MeshStandardMaterial({color:0xEEEEEE,roughness:0.9,transparent:true,opacity:0.06,depthWrite:false,side:THREE.DoubleSide}));dcG.position.set(0,4,-6);g.add(dcG);for(let i=0;i<5;i++){const p=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,16,8),mt('flow'));p.rotation.x=Math.PI/2;p.position.set(-6+i*3,8,-6);g.add(p);}g.position.y=-1;}
 
-function genManhattan(g){const r=R(77);bx(g,mt('base'),0,0,0,18,0.06,18);for(let i=-4;i<=4;i++){bx(g,mt('baseDk',{opacity:0.12}),i*1.95,0.04,0,0.35,0.01,18);bx(g,mt('baseDk',{opacity:0.1}),0,0.04,i*1.95,18,0.01,0.25);}const bm=['agent','agentLt','agentDk'];for(let bxx=-4;bxx<=4;bxx++)for(let bz=-4;bz<=4;bz++){const x=bxx*1.95,z=bz*1.95;for(let b=0;b<1+Math.floor(r()*3);b++){const w=0.2+r()*0.7,d=0.2+r()*0.7;let h=0.3+r()*3.5;if(r()>0.88)h=4+r()*6;bx(g,mt(bm[Math.floor(r()*bm.length)]),x+(r()-0.5)*0.7,h/2,z+(r()-0.5)*0.7,w,h,d);if(h>4&&r()>0.3)bx(g,mt(bm[Math.floor(r()*bm.length)]),x+(r()-0.5)*0.5,h+h*0.18,z+(r()-0.5)*0.5,w*0.55,h*0.35,d*0.55);}}bx(g,mt('timeDk'),0,-0.5,0,17,0.4,17);for(let i=-2;i<=2;i++){const t=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,17,8),mt('flow'));t.rotation.z=Math.PI/2;t.position.set(0,-0.8,i*3.5);g.add(t);}g.position.y=-0.5;}
+// ═══ CORAL REEF LIFECYCLE: continuous palimpsest — each branch ages individually ═══
+function genCoralLifecycle(g) {
+  const r = R(101);
+  lifecycleMeshes = [];
+  animatedWasps = [];
 
-// ═══ H100 × WASP NEST — CONSTITUTIONAL TRANSPLANT ═══
-function genHybrid(g) {
-  const r = R(73);
-  const cellGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.35, 6, 1, true);
-  const capGeo = new THREE.CylinderGeometry(0.19, 0.19, 0.04, 6);
+  const tag = (mesh, appear, peak, fade, gone) => {
+    mesh.userData.lc = { appear, peak, fade, gone };
+    lifecycleMeshes.push(mesh);
+    return mesh;
+  };
 
-  // ── ANCHOR STALK — site attachment (agent) ──
-  const anchorCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.1, 2, 0.06), new THREE.Vector3(-0.04, 4, 0)
-  ]);
-  g.add(new THREE.Mesh(new THREE.TubeGeometry(anchorCurve, 12, 0.1, 8, false), mt('agentDk', { opacity: 0.5 })));
-  const plateGeo = new THREE.CylinderGeometry(0.8, 0.5, 0.1, 6);
-  displaceGeo(plateGeo, 0.1, 3, 88);
-  g.add(new THREE.Mesh(plateGeo, mt('agentDk', { opacity: 0.4 }))).position.y = 4.1;
+  // ── FOCAL CORAL BUILDER ──
+  // Each PRIMARY branch (the 11 base trunks) gets its OWN random start time spread
+  // across the cycle. Within a primary, depth offsets follow normally. Result: at
+  // any moment, different primaries are at DIFFERENT lifecycle stages — some still
+  // sprouting, some at peak with polyps, some bleaching, some skeletal. Continuous
+  // turnover, not a single sequential wave.
+  function buildFocalCoral(rootPos, seed, scale, livingDur, depthSpread, primarySpread) {
+    const r2 = R(seed);
 
-  // ── HEXAGONAL SUBSTRATE — the "PCB" is a hex disc (flow) ──
-  const subGeo = new THREE.CylinderGeometry(4.5, 4.8, 0.1, 6);
-  displaceGeo(subGeo, 0.04, 1.5, 42);
-  g.add(new THREE.Mesh(subGeo, mt('flow', { opacity: 0.25 }))).position.y = -0.05;
+    function recurse(start, dir, length, thickness, depth, primaryStart) {
+      if (depth > 3 || length < 0.05) return;
+      const end = start.clone().add(dir.clone().multiplyScalar(length));
+      const cp1 = start.clone().add(dir.clone().multiplyScalar(length * 0.3));
+      cp1.add(new THREE.Vector3((r2() - 0.5) * 0.06, (r2() - 0.5) * 0.03, (r2() - 0.5) * 0.06));
+      const cp2 = start.clone().add(dir.clone().multiplyScalar(length * 0.7));
+      cp2.add(new THREE.Vector3((r2() - 0.5) * 0.06, (r2() - 0.5) * 0.03, (r2() - 0.5) * 0.06));
+      const path = new THREE.CatmullRomCurve3([start, cp1, cp2, end]);
+      const tubeGeo = new THREE.TubeGeometry(path, 8, thickness, 5, false);
 
-  // ── CENTRAL COMB — the "die" / processor (agent — decisions happen here) ──
-  const dieComb = new THREE.Group();
-  const dieDiscGeo = new THREE.CylinderGeometry(2.2, 2.3, 0.07, 6);
-  displaceGeo(dieDiscGeo, 0.05, 2, 33);
-  dieComb.add(new THREE.Mesh(dieDiscGeo, mt('agentDk', { opacity: 0.3 }))).position.y = -0.18;
-  const cs = 0.42;
-  for (let q = -6; q <= 6; q++) for (let rr = -6; rr <= 6; rr++) {
-    if (Math.abs(q + rr) > 6) continue;
-    const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
-    const dist = Math.sqrt(x * x + z * z);
-    const bn = fbm(x * 0.8 + 10, z * 0.8, 3);
-    if (dist > 2.0 * (0.85 + bn * 0.2)) continue;
-    const cell = new THREE.Mesh(cellGeo, mt(r() > 0.5 ? 'agent' : 'agentLt', { opacity: 0.4 }));
-    cell.position.set(x, 0, z); cell.rotation.y = r() * 0.1;
-    dieComb.add(cell);
-    if (r() > 0.4) {
-      const cap = new THREE.Mesh(capGeo, mt('time', { opacity: 0.5 }));
-      cap.position.set(x, 0.19, z); dieComb.add(cap);
-    }
-  }
-  g.add(dieComb);
+      // Branch's age clock — anchored to its primary's start time, then depth offset
+      const appearT = primaryStart + depth * depthSpread + r2() * 0.03;
+      const bleachT = appearT + livingDur;
 
-  // ── 6 SATELLITE COMBS — the "HBM" memory in hexagonal ring (flow) ──
-  for (let hi = 0; hi < 6; hi++) {
-    const ha = (hi / 6) * Math.PI * 2;
-    const hx = Math.cos(ha) * 3.2, hz = Math.sin(ha) * 3.2;
-    const memComb = new THREE.Group();
-    memComb.position.set(hx, 0, hz);
-    // Disc
-    const mDiscGeo = new THREE.CylinderGeometry(0.9, 0.95, 0.06, 6);
-    displaceGeo(mDiscGeo, 0.05, 2, hi * 11);
-    memComb.add(new THREE.Mesh(mDiscGeo, mt('flowDk', { opacity: 0.3 }))).position.y = -0.15;
-    // Memory cells — stacked 8 layers tall (like HBM)
-    for (let layer = 0; layer < 8; layer++) {
-      for (let q2 = -2; q2 <= 2; q2++) for (let rr2 = -2; rr2 <= 2; rr2++) {
-        if (Math.abs(q2 + rr2) > 2) continue;
-        const mx = q2 * 0.32 + rr2 * 0.16, mz = rr2 * 0.28;
-        if (Math.sqrt(mx * mx + mz * mz) > 0.75) continue;
-        const mCell = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.1, 0.1, 0.035, 6),
-          mt(layer % 2 === 0 ? 'flow' : 'flowLt', { opacity: 0.4 })
+      // 1. LIVING TUBE — fades when this branch's bleach phase begins
+      const tube = new THREE.Mesh(tubeGeo, mt('flow', { opacity: 0.5 }));
+      tube.position.copy(rootPos);
+      g.add(tag(tube, appearT, appearT + 0.10, bleachT, bleachT + 0.08));
+
+      // 2. BLEACHED SKELETON OVERLAY — light wireframe, appears as branch bleaches.
+      // No fade in lc (set to 1.5+ so it never naturally fades within cycle).
+      // The end-of-cycle global fade in updateLifecycle handles loop reset.
+      const bleachedEdges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(tubeGeo, 15),
+        new THREE.LineBasicMaterial({ color: 0xCCCCCC, transparent: true, opacity: 0.55 })
+      );
+      bleachedEdges.position.copy(rootPos);
+      g.add(tag(bleachedEdges, bleachT - 0.05, bleachT + 0.05, 1.5, 1.6));
+
+      // 3. POLYPS — bleach near branch's bleach time with random offset
+      for (let p = 1; p <= 3; p++) {
+        const polyp = new THREE.Mesh(
+          new THREE.SphereGeometry(thickness * 1.5, 5, 4),
+          mt('flowDk', { opacity: 0.65 })
         );
-        mCell.position.set(mx, layer * 0.04, mz);
-        memComb.add(mCell);
-      }
-      // Layer cap every 3rd layer
-      if (layer % 3 === 2) {
-        memComb.add(new THREE.Mesh(
-          new THREE.CylinderGeometry(0.7, 0.7, 0.01, 6),
-          mt('time', { opacity: 0.25 })
-        )).position.y = layer * 0.04 + 0.02;
-      }
-    }
-    // Petiole connecting satellite to center (agent — data bus)
-    const petCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(-hx * 0.4, 0.1 + r() * 0.2, -hz * 0.4),
-      new THREE.Vector3(-hx, 0, -hz)
-    ]);
-    memComb.add(new THREE.Mesh(
-      new THREE.TubeGeometry(petCurve, 8, 0.035, 5, false),
-      mt('agent', { opacity: 0.4 })
-    ));
-    g.add(memComb);
-  }
-
-  // ── MYCELIUM DATA NETWORK — radial branching from center (flow) ──
-  for (let i = 0; i < 15; i++) {
-    const a = r() * Math.PI * 2, len = 1.5 + r() * 3;
-    const pts = [];
-    for (let s = 0; s < 6; s++) {
-      const t = s / 5;
-      pts.push(new THREE.Vector3(
-        Math.cos(a + (r()-0.5)*t*0.4) * t * len,
-        0.05 + (r()-0.5)*0.03,
-        Math.sin(a + (r()-0.5)*t*0.4) * t * len
-      ));
-    }
-    g.add(new THREE.Mesh(
-      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, 0.012, 4, false),
-      mt('flowLt', { opacity: 0.2 })
-    ));
-  }
-
-  // ── SECOND TIER — stacked below (like a wasp nest's second comb = second server sled) ──
-  const tier2 = new THREE.Group();
-  tier2.position.y = -2;
-  const t2Disc = new THREE.CylinderGeometry(3.8, 4, 0.07, 6);
-  displaceGeo(t2Disc, 0.05, 2, 77);
-  tier2.add(new THREE.Mesh(t2Disc, mt('flowDk', { opacity: 0.25 }))).position.y = -0.15;
-  // Smaller version of the central+satellite pattern
-  for (let q = -5; q <= 5; q++) for (let rr = -5; rr <= 5; rr++) {
-    if (Math.abs(q + rr) > 5) continue;
-    const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
-    if (Math.sqrt(x * x + z * z) > 2.5) continue;
-    tier2.add(new THREE.Mesh(cellGeo, mt(r()>0.6?'agent':'agentLt', { opacity: 0.3 }))).position.set(x, 0, z);
-    if (r() > 0.5) tier2.add(new THREE.Mesh(capGeo, mt('time', { opacity: 0.4 }))).position.set(x, 0.19, z);
-  }
-  // Petioles from tier 1 to tier 2
-  for (let p = 0; p < 4; p++) {
-    const pa = (p / 4) * Math.PI * 2 + r() * 0.4;
-    const px = Math.cos(pa) * r() * 1.5, pz = Math.sin(pa) * r() * 1.5;
-    const petC = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(px, 2, pz),
-      new THREE.Vector3(px + (r()-0.5)*0.3, 1, pz + (r()-0.5)*0.3),
-      new THREE.Vector3(px + (r()-0.5)*0.2, 0.1, pz + (r()-0.5)*0.2)
-    ]);
-    tier2.add(new THREE.Mesh(new THREE.TubeGeometry(petC, 8, 0.04, 5, false), mt('agent', { opacity: 0.4 })));
-    // Cooling capillary spiraling around petiole
-    const coolPts = [];
-    for (let s = 0; s < 16; s++) {
-      const t = s / 15, pt = petC.getPoint(t);
-      coolPts.push(new THREE.Vector3(pt.x + Math.cos(s*1.1)*0.1, pt.y, pt.z + Math.sin(s*1.1)*0.1));
-    }
-    tier2.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(coolPts), 12, 0.012, 4, false), mt('flowLt', { opacity: 0.15 })));
-  }
-  g.add(tier2);
-
-  // ── THIRD TIER — smallest, aging ──
-  const tier3 = new THREE.Group();
-  tier3.position.y = -3.8;
-  const t3Disc = new THREE.CylinderGeometry(2.5, 2.7, 0.06, 6);
-  displaceGeo(t3Disc, 0.06, 2, 44);
-  tier3.add(new THREE.Mesh(t3Disc, mt('flowDk', { opacity: 0.2 }))).position.y = -0.12;
-  for (let q = -4; q <= 4; q++) for (let rr = -4; rr <= 4; rr++) {
-    if (Math.abs(q + rr) > 4) continue;
-    const x = q * cs * 0.87 + rr * cs * 0.435, z = rr * cs * 0.755;
-    if (Math.sqrt(x * x + z * z) > 1.8) continue;
-    if (r() > 0.85) continue; // some cells decaying at edges
-    tier3.add(new THREE.Mesh(cellGeo, mt('agent', { opacity: 0.2 + r()*0.1 }))).position.set(x, 0, z);
-  }
-  for (let p = 0; p < 3; p++) {
-    const pa = (p / 3) * Math.PI * 2 + r() * 0.5;
-    tier3.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
-      new THREE.Vector3(Math.cos(pa)*0.5, 1.8, Math.sin(pa)*0.5),
-      new THREE.Vector3(Math.cos(pa)*0.3, 0.9, Math.sin(pa)*0.3),
-      new THREE.Vector3(Math.cos(pa)*0.4, 0.1, Math.sin(pa)*0.4)
-    ]), 6, 0.035, 5, false), mt('agent', { opacity: 0.35 })));
-  }
-  g.add(tier3);
-
-  // ── OPEN CALDERA ENVELOPE — heat rises out the top, sides protect ──
-  // A wasp building a chip would NOT seal it shut — computation generates heat.
-  // Open top allows thermal convection. Flared rim. Bowl/ring form.
-  for (let l = 0; l < 20; l++) {
-    const rad = 4.2 + l * 0.16;
-    // Bowl shape — starts at ~40° from horizontal, open top
-    const geo = new THREE.SphereGeometry(rad, 44, 32, 0, Math.PI * 2, 0.55, Math.PI * 0.48);
-    displaceGeo(geo, 0.1 + l * 0.007, 1.1 + l * 0.12, l * 4.3);
-
-    // Flare the rim outward + tear bottom edges
-    const pos = geo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-      const r2 = Math.sqrt(x * x + z * z);
-
-      // Flare top rim outward (where y is highest = rim)
-      if (y > rad * 0.15) {
-        const flare = 1 + (y / rad - 0.15) * 0.6;
-        pos.setX(i, x * flare);
-        pos.setZ(i, z * flare);
+        const tt = p / 4;
+        polyp.position.copy(rootPos).add(path.getPoint(tt));
+        const polypBleach = bleachT - 0.08 + r2() * 0.10;
+        const polypGone = polypBleach + 0.04 + r2() * 0.03;
+        g.add(tag(polyp, appearT + 0.05, appearT + 0.16, polypBleach, polypGone));
       }
 
-      // Tear bottom edges
-      if (y < -rad * 0.3) {
-        const tn = fbm(x * 2 + l, y * 2, z * 2 + l * 0.5);
-        pos.setY(i, y - ((-y / rad) - 0.3) * 0.4 * tn * rad * 0.25);
+      const numChildren = depth < 1 ? 4 + Math.floor(r2() * 2) : 2 + Math.floor(r2() * 2);
+      for (let i = 0; i < numChildren; i++) {
+        const newDir = dir.clone();
+        newDir.x += (r2() - 0.5) * 0.7;
+        newDir.z += (r2() - 0.5) * 0.7;
+        newDir.y = Math.max(0.3, dir.y - r2() * 0.15);
+        newDir.normalize();
+        recurse(end, newDir, length * (0.68 + r2() * 0.12), thickness * 0.74, depth + 1, primaryStart);
       }
     }
-    pos.needsUpdate = true; geo.computeVertexNormals();
 
-    const env = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      color: new THREE.Color().setHSL(0.12, currentTheme.envSat + 0.05, currentTheme.envelope + 0.02 + l * 0.003),
-      transparent: true, opacity: 0.03 + l * 0.003,
-      depthWrite: false, side: THREE.DoubleSide, roughness: 0.65
-    }));
-    env.position.y = -1.5;
-    g.add(env);
+    const numPrimary = 11;
+    for (let i = 0; i < numPrimary; i++) {
+      const angle = (i / numPrimary) * Math.PI * 2 + r2() * 0.3;
+      const tilt = 0.2 + r2() * 0.4;
+      const startPos = new THREE.Vector3(
+        Math.cos(angle) * 0.15 * scale,
+        0,
+        Math.sin(angle) * 0.15 * scale
+      );
+      const startDir = new THREE.Vector3(
+        Math.cos(angle) * Math.sin(tilt) * 0.6,
+        Math.cos(tilt) + 0.4,
+        Math.sin(angle) * Math.sin(tilt) * 0.6
+      ).normalize();
+      // Each primary gets a RANDOM start time across primarySpread window
+      const primaryStart = r2() * primarySpread;
+      recurse(startPos, startDir, 0.55 * scale, 0.13 * scale, 0, primaryStart);
+    }
   }
 
-  // ── INNER RIM DETAIL — thin rings at the flared top edge ──
-  for (let i = 0; i < 5; i++) {
-    const rimR = 4.8 + i * 0.2;
-    const rimGeo = new THREE.TorusGeometry(rimR, 0.02 + i * 0.005, 6, 48);
-    displaceGeo(rimGeo, 0.06, 2, i * 17);
-    const rim = new THREE.Mesh(rimGeo, new THREE.MeshStandardMaterial({
-      color: new THREE.Color().setHSL(0.12, currentTheme.envSat, currentTheme.envelope + 0.05),
-      transparent: true, opacity: 0.04 + i * 0.005,
-      depthWrite: false, side: THREE.DoubleSide, roughness: 0.7
-    }));
-    rim.rotation.x = Math.PI / 2;
-    rim.position.y = 0.8 + i * 0.15;
-    g.add(rim);
-  }
-
-  // ── WIDE SUBSTRATE DISC — the platform everything grows on ──
-  const wideSub = new THREE.Mesh(
-    new THREE.CylinderGeometry(6.5, 7, 0.06, 6),
-    mt('flow', { opacity: 0.18 })
+  // ── CORAL — continuous turnover across the full cycle ──
+  // primarySpread=0.55 means primaries can begin growing anywhere from t=0 to t=0.55.
+  // livingDur=0.30 means a branch lives 0.30 of cycle before bleaching.
+  // At any moment, you'll see some primaries still sprouting, some mature, some
+  // bleaching, some skeletal — all coexisting.
+  buildFocalCoral(
+    new THREE.Vector3(0, 0, 0), 11, 2.4,
+    0.30,   // livingDur
+    0.06,   // depthSpread
+    0.55    // primarySpread — primaries born randomly across this window
   );
-  wideSub.position.y = -0.1;
-  g.add(wideSub);
 
-  // ── DRAMATIC COOLING RINGS — oversized, floating above ──
-  // These are the thermal convection loops — heat rises through the caldera
-  // and these rings capture and redirect it back down the sides
-  for (let i = 0; i < 6; i++) {
-    const ringR = 4 + i * 1.2;
-    const ringThick = 0.04 + i * 0.015;
-    const ringGeo = new THREE.TorusGeometry(ringR, ringThick, 8, 64);
-    displaceGeo(ringGeo, 0.04 + i * 0.01, 1.5, i * 13);
-    const ring = new THREE.Mesh(ringGeo, mt('flow', { opacity: 0.22 - i * 0.02 }));
-    ring.rotation.x = Math.PI / 2 + (r() - 0.5) * 0.08;
-    ring.rotation.z = (r() - 0.5) * 0.05;
-    ring.position.y = 2 + i * 1.1;
-    g.add(ring);
-  }
-  // Vertical connectors between rings — heat return paths
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2 + r() * 0.2;
-    const pts = [
-      new THREE.Vector3(Math.cos(a) * 4, 2, Math.sin(a) * 4),
-      new THREE.Vector3(Math.cos(a) * 6, 4.5, Math.sin(a) * 6),
-      new THREE.Vector3(Math.cos(a) * 9, 7.5, Math.sin(a) * 9)
-    ];
-    g.add(new THREE.Mesh(
-      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, 0.02, 5, false),
-      mt('flowLt', { opacity: 0.12 })
-    ));
-  }
-
-  // ── DECOMPOSITION — previous generation fragments below ──
-  for (let i = 0; i < 30; i++) {
-    const a = r() * Math.PI * 2, d = r() * 3;
-    const frag = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.12 + r()*0.08, 0.15, 0.06, 6, 1, true),
-      mt(r()>0.5 ? 'time' : 'flow', { opacity: 0.06 + r()*0.06 })
-    );
-    frag.position.set(Math.cos(a)*d, -5.5 + r()*0.3, Math.sin(a)*d);
-    frag.rotation.set(r()*Math.PI, r(), r()*0.5);
-    g.add(frag);
-  }
-
-  g.position.y = 1;
-}
-
-
-// ═══ MANHATTAN × WASP NEST — dense vertical hex towers, canopy above, open sides ═══
-function genManhattanHybrid(g) {
-  const r = R(91);
-  const cellGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.4, 6, 1, true);
-  const capGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.05, 6);
-
-  // ── ORGANIC GROUND — no concrete, living substrate ──
-  const groundGeo = new THREE.CylinderGeometry(10, 10.5, 0.12, 6);
-  displaceGeo(groundGeo, 0.04, 0.8, 33);
-  g.add(new THREE.Mesh(groundGeo, mt('base', { opacity: 0.15 })));
-
-  // ── DENSE TOWER CLUSTERS — "buildings" as vertical hex cell stacks ──
-  for (let i = 0; i < 40; i++) {
+  // ── BLEACHING CLOUD — released zooxanthellae drifting up throughout the cycle ──
+  for (let i = 0; i < 100; i++) {
     const a = r() * Math.PI * 2;
-    const d = 0.5 + r() * 7.5;
-    if (r() > 1 - (d / 10) * 0.3) continue;
-    const tx = Math.cos(a) * d + (r() - 0.5) * 1;
-    const tz = Math.sin(a) * d + (r() - 0.5) * 1;
-    const dist = Math.sqrt(tx * tx + tz * tz);
-    const maxH = Math.max(1, 8 - dist * 0.6 + (r() - 0.5) * 3);
-    const numFloors = Math.floor(1 + r() * maxH);
-    const towerR = 0.3 + r() * 0.4;
-    for (let f = 0; f < numFloors; f++) {
-      const numCells = f < numFloors * 0.7 ? Math.floor(3 + r() * 4) : Math.max(1, Math.floor((numFloors - f) * 1.5));
-      for (let ci = 0; ci < numCells; ci++) {
-        const ca = (ci / numCells) * Math.PI * 2 + f * 0.1;
-        const cd = ci === 0 ? 0 : towerR * (0.4 + r() * 0.3);
-        const cx = tx + Math.cos(ca) * cd;
-        const cz = tz + Math.sin(ca) * cd;
-        const cell = new THREE.Mesh(cellGeo, mt('agent', { opacity: 0.3 - dist * 0.015 }));
-        cell.position.set(cx, 0.2 + f * 0.42, cz);
-        cell.rotation.y = r() * 0.15;
-        g.add(cell);
-        if (r() > 0.5) {
-          g.add(new THREE.Mesh(capGeo, mt('time', { opacity: 0.35 }))).position.set(cx, 0.42 + f * 0.42, cz);
-        }
-      }
-    }
+    const d = 0.5 + r() * 2.8;
+    const h = 0.3 + r() * 4.0;
+    const cloudGeo = new THREE.OctahedronGeometry(0.04 + r() * 0.04, 0);
+    const cloud = new THREE.Mesh(cloudGeo, new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      transparent: true, opacity: 0.5,
+      depthWrite: false, roughness: 0.7
+    }));
+    cloud.position.set(Math.cos(a) * d, h, Math.sin(a) * d);
+    // Cloud drifts throughout the cycle since bleaching is continuous
+    const cloudAppear = 0.30 + r() * 0.55;
+    g.add(tag(cloud, cloudAppear, cloudAppear + 0.04, cloudAppear + 0.10, cloudAppear + 0.18));
   }
 
-  // ── WINDING PATHS ──
-  for (let i = 0; i < 18; i++) {
-    const a0 = r() * Math.PI * 2, len = 3 + r() * 6;
-    const pts = [];
-    for (let s = 0; s < 8; s++) {
-      const t = s / 7;
-      pts.push(new THREE.Vector3(Math.cos(a0 + (r()-0.5)*t*1.2) * t * len, 0.1, Math.sin(a0 + (r()-0.5)*t*1.2) * t * len));
-    }
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 14, 0.05, 5, false), mt('agentLt', { opacity: 0.2 })));
-  }
-
-  // ── SHALLOW ROOTS — temporary ──
-  for (let i = 0; i < 12; i++) {
-    const a = r() * Math.PI * 2, d = 1 + r() * 6;
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
-      new THREE.Vector3(Math.cos(a)*d, 0, Math.sin(a)*d),
-      new THREE.Vector3(Math.cos(a)*d*0.7, -0.4, Math.sin(a)*d*0.7),
-      new THREE.Vector3(Math.cos(a)*d*0.4, -0.7, Math.sin(a)*d*0.4)
-    ]), 6, 0.02, 4, false), mt('flow', { opacity: 0.12 })));
-  }
-
-  // ── CANOPY ENVELOPE — closed top, open sides (street access) ──
-  for (let l = 0; l < 18; l++) {
-    const rad = 10 + l * 0.18;
-    const geo = new THREE.SphereGeometry(rad, 44, 28, 0, Math.PI * 2, 0, Math.PI * 0.38);
-    displaceGeo(geo, 0.08 + l * 0.006, 0.8 + l * 0.1, l * 6.1);
-    const pos = geo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const y = pos.getY(i);
-      if (y < rad * 0.7) {
-        const tn = fbm(pos.getX(i)*1.5+l, y+l, pos.getZ(i)*1.5);
-        const rimDist = (rad*0.7 - y) / rad;
-        pos.setY(i, y + rimDist * tn * rad * 0.15);
-        const flare = 1 + rimDist * 0.3;
-        pos.setX(i, pos.getX(i) * flare);
-        pos.setZ(i, pos.getZ(i) * flare);
-      }
-    }
-    pos.needsUpdate = true; geo.computeVertexNormals();
-    g.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      color: new THREE.Color().setHSL(0.12, currentTheme.envSat, currentTheme.envelope+0.04+l*0.004),
-      transparent:true, opacity:0.025+l*0.002, depthWrite:false, side:THREE.DoubleSide, roughness:0.65
-    }))).position.y = 1;
-  }
-
-  // ── DECOMPOSITION RING ──
-  for (let i = 0; i < 35; i++) {
-    const a = r()*Math.PI*2, d = 7+r()*3;
-    const frag = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,0.06,6,1,true), mt(r()>0.5?'time':'agent',{opacity:0.06+r()*0.06}));
-    frag.position.set(Math.cos(a)*d, r()*0.3, Math.sin(a)*d);
-    frag.rotation.set(r()*Math.PI, r(), r());
-    g.add(frag);
-  }
-  g.position.y = -0.5;
+  g.position.y = 0;
+  updateLifecycle(lifecycleT);
 }
 
-// ═══ CONVERGENCE — compute calderas under perforated district canopy ═══
-function genConvergence(g) {
-  const r = R(137);
-  const cellGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.35, 6, 1, true);
-  const capGeo = new THREE.CylinderGeometry(0.17, 0.17, 0.04, 6);
 
-  const groundGeo = new THREE.CylinderGeometry(12, 12.5, 0.1, 6);
-  displaceGeo(groundGeo, 0.03, 0.5, 55);
-  g.add(new THREE.Mesh(groundGeo, mt('base', { opacity: 0.12 })));
+// ═══ ISE SHRINE LIFECYCLE: shikinen sengū — 20-year alternation between two adjacent sites ═══
+// Site A starts active (already standing from a previous cycle), gets dismantled in second half.
+// Site B starts empty (kodenchi post only), gets built in first half. They swap places.
+// At loop reset, we're back to the start (A active, B empty) — the visual jump represents
+// the next 20 years passing. The cycle is metronomic, not smooth — that's the point.
+function genIseShrine(g) {
+  const r = R(202);
+  lifecycleMeshes = [];
+  animatedWasps = [];
 
-  // ── 7 COMPUTE CLUSTERS with caldera envelopes ──
-  const clusters = [[0, 0, 1.4]];
-  for (let i = 0; i < 6; i++) {
-    const a = (i/6)*Math.PI*2 + r()*0.3;
-    clusters.push([Math.cos(a)*(5+r()*2), Math.sin(a)*(5+r()*2), 0.6+r()*0.4]);
+  const tag = (mesh, ...args) => {
+    // Two call patterns supported:
+    //   tag(mesh, a, p, f, g)              → 4 numbers, single period
+    //   tag(mesh, [a,p,f,g], [a,p,f,g])    → N arrays, multi-period (after spread of array-of-arrays)
+    let periods;
+    if (args.length > 0 && Array.isArray(args[0])) {
+      periods = args.map(([a,p,f,g]) => ({appear: a, peak: p, fade: f, gone: g}));
+    } else {
+      const [a,p,f,g] = args;
+      periods = [{appear: a, peak: p, fade: f, gone: g}];
+    }
+    mesh.userData.lc = periods;
+    if (mesh.material && mesh.material.color) {
+      mesh.userData.baseColor = mesh.material.color.clone();
+      const white = new THREE.Color(0xFFFFFF);
+      // Light variant: 70% toward white from base — fresh hinoki
+      mesh.userData.lightColor = mesh.userData.baseColor.clone().lerp(white, 0.72);
+    }
+    lifecycleMeshes.push(mesh);
+    return mesh;
+  };
+  // Variant: marks the mesh as a shrine wood component that ages from light to dark.
+  const tagAge = (mesh, ...args) => {
+    tag(mesh, ...args);
+    mesh.userData.ages = true;
+    return mesh;
+  };
+  const persist = mesh => tag(mesh, -0.5, -0.4, 1.5, 1.6);
+
+  // Building dimensions (shinmei-zukuri proportions — long ridge, steep roof, raised platform)
+  const W = 3.6, D = 2.0;       // W = long axis (X, ridge runs this way), D = short axis (Z)
+  const PLATFORM_H = 0.15;
+  const FLOOR_Y = 0.85;          // raised platform — hottate-bashira
+  const WALL_H = 1.25;
+  const WALL_TOP_Y = FLOOR_Y + PLATFORM_H + WALL_H;  // 2.25
+  const RIDGE_Y = 3.7;           // steep roof, ridge well above wall top
+  const EAVE_OVERHANG = 0.4;
+  const SITE_A_X = -3.8;
+  const SITE_B_X = 3.8;
+
+  // ─── Wood grain texture (procedural canvas, shared across all wood materials) ───
+  // White base × subtle dark streaks → multiplies into base color, so grain reads as
+  // slightly darker veins of whatever color the wood happens to be (works in both
+  // monochrome and pink themes, and stays correct as aging lerps the base color).
+  const grainTex = (() => {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 256;
+    const x = c.getContext('2d');
+    x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, 256, 256);
+    // Long wavering streaks roughly along U
+    for (let i = 0; i < 38; i++) {
+      const y = r() * 256;
+      const op = 0.05 + r() * 0.10;
+      x.strokeStyle = `rgba(0,0,0,${op})`;
+      x.lineWidth = 0.4 + r() * 0.7;
+      x.beginPath();
+      x.moveTo(0, y);
+      for (let xp = 0; xp <= 256; xp += 4) {
+        x.lineTo(xp, y + Math.sin(xp * 0.045 + i * 0.6) * 1.8 + (r() - 0.5) * 0.6);
+      }
+      x.stroke();
+    }
+    // A few small knot rings for character
+    for (let i = 0; i < 4; i++) {
+      const cx = r() * 256, cy = r() * 256;
+      const rad = 0.8 + r() * 1.5;
+      x.strokeStyle = `rgba(0,0,0,${0.10 + r() * 0.08})`;
+      x.lineWidth = 0.5;
+      x.beginPath(); x.arc(cx, cy, rad, 0, Math.PI * 2); x.stroke();
+      x.beginPath(); x.arc(cx, cy, rad * 1.7, 0, Math.PI * 2); x.stroke();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(2, 2);
+    t.anisotropy = 4;
+    return t;
+  })();
+
+  // ─── Helper: build one full shrine at a position with given lifecycle timings ───
+  function buildShrine(siteX, lcs) {
+    const withGrain = m => { m.map = grainTex; return m; };
+    const wood     = () => withGrain(mt('flow',   { opacity: 0.55 }));
+    const woodLt   = () => withGrain(mt('flowLt', { opacity: 0.50 }));
+    const woodDk   = () => withGrain(mt('flowDk', { opacity: 0.65 }));
+    const thatchMat = () => withGrain(mt('flowDk', { opacity: 0.78 }));
+
+    // 1. PILLARS (hottate-bashira) — 6 corner+mid posts driven directly into ground.
+    // Positions span the rectangular footprint (corners + mid-long-sides).
+    const postPositions = [
+      [-W/2, -D/2], [W/2, -D/2],
+      [-W/2,  D/2], [W/2,  D/2],
+      [0, -D/2],    [0,  D/2],     // mid-long-sides
+    ];
+    postPositions.forEach(([x, z]) => {
+      const post = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.06, 0.06, WALL_TOP_Y, 8),
+        wood()
+      );
+      post.position.set(siteX + x, WALL_TOP_Y / 2, z);
+      g.add(tagAge(post, ...lcs.posts));
+    });
+
+    // 2. PLATFORM (raised wooden floor — takayuka style)
+    // Extends BEYOND the walls in all directions: in shinmei-zukuri the floor's edge
+    // forms the wraparound walkway (what's read as "veranda"). Stairs land on this edge.
+    const PLATFORM_OVER_X = 0.30;   // platform overhangs walls by this much in +X/−X
+    const PLATFORM_OVER_Z = 0.25;   // ...and by this in +Z/−Z
+    const platform = new THREE.Mesh(
+      new THREE.BoxGeometry(W + PLATFORM_OVER_X * 2, PLATFORM_H, D + PLATFORM_OVER_Z * 2),
+      woodLt()
+    );
+    platform.position.set(siteX, FLOOR_Y + PLATFORM_H / 2, 0);
+    g.add(tagAge(platform, ...lcs.platform));
+
+    // 3. MUNAMOCHI-BASHIRA — free-standing pillars at GABLE ENDS (±X) supporting the ridge.
+    // Characteristic of shinmei-zukuri: visible OUTSIDE the gable wall, going to the apex.
+    [-W/2 - 0.18, W/2 + 0.18].forEach(x => {
+      const munamochi = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.09, RIDGE_Y, 10),
+        wood()
+      );
+      munamochi.position.set(siteX + x, RIDGE_Y / 2, 0);
+      g.add(tagAge(munamochi, ...lcs.munamochi));
+    });
+
+    // 4. ROOF STRUCTURE — gabled, ridge runs along X. Two slopes pitch in ±Z.
+    // Slopes meet at ridge (z=0, y=RIDGE_Y), descend to eaves at y=WALL_TOP_Y, z=±roofRun.
+    const roofWidth = W + 0.2;     // slight gable extension beyond wall
+    const roofRise = RIDGE_Y - WALL_TOP_Y;
+    const roofRun = D / 2 + EAVE_OVERHANG;
+    const slopeLen = Math.sqrt(roofRise * roofRise + roofRun * roofRun);
+    const slopeAngle = Math.atan2(roofRise, roofRun);
+    [+1, -1].forEach(side => {
+      const slope = new THREE.Mesh(
+        new THREE.BoxGeometry(roofWidth, 0.08, slopeLen),
+        wood()
+      );
+      slope.position.set(siteX, (RIDGE_Y + WALL_TOP_Y) / 2, side * roofRun / 2);
+      slope.rotation.x = side * slopeAngle;   // FIXED: outer eave goes DOWN, inner ridge UP
+      g.add(tagAge(slope, ...lcs.roof));
+    });
+
+    // Ridge beam — visible spine along X at the apex, where katsuogi sit on top
+    const ridgeBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(W + 0.3, 0.10, 0.10),
+      woodDk()
+    );
+    ridgeBeam.position.set(siteX, RIDGE_Y, 0);
+    g.add(tagAge(ridgeBeam, ...lcs.roof));
+
+    // 5. WALLS
+    // 5a. Long-side walls (at z = ±D/2) — solid
+    [-D/2 + 0.025, D/2 - 0.025].forEach(z => {
+      const wall = new THREE.Mesh(
+        new THREE.BoxGeometry(W - 0.08, WALL_H, 0.05),
+        wood()
+      );
+      wall.position.set(siteX, FLOOR_Y + PLATFORM_H + WALL_H / 2, z);
+      g.add(tagAge(wall, ...lcs.walls));
+    });
+    // 5b. Gable-end walls (at x = ±W/2) — front (+X) has door for tsumairi entry
+    [-W/2 + 0.025, W/2 - 0.025].forEach((x, idx) => {
+      const isFront = idx === 1;
+      if (isFront) {
+        const doorWidth = 0.7;
+        const sideWidth = (D - doorWidth - 0.08) / 2;
+        [-1, 1].forEach(s => {
+          const wall = new THREE.Mesh(
+            new THREE.BoxGeometry(0.05, WALL_H, sideWidth),
+            wood()
+          );
+          wall.position.set(siteX + x, FLOOR_Y + PLATFORM_H + WALL_H / 2, s * (doorWidth/2 + sideWidth/2));
+          g.add(tagAge(wall, ...lcs.walls));
+        });
+        const lintel = new THREE.Mesh(
+          new THREE.BoxGeometry(0.05, 0.22, doorWidth),
+          wood()
+        );
+        lintel.position.set(siteX + x, FLOOR_Y + PLATFORM_H + WALL_H - 0.11, 0);
+        g.add(tagAge(lintel, ...lcs.walls));
+      } else {
+        const wall = new THREE.Mesh(
+          new THREE.BoxGeometry(0.05, WALL_H, D - 0.08),
+          wood()
+        );
+        wall.position.set(siteX + x, FLOOR_Y + PLATFORM_H + WALL_H / 2, 0);
+        g.add(tagAge(wall, ...lcs.walls));
+      }
+    });
+    // 5c. Gable triangle walls — fill the peak from wall_top up to ridge at each gable end.
+    // Base extends to the eave line (±roofRun), so the triangle's slopes match the roof slopes.
+    [-W/2 - 0.02, W/2 + 0.02].forEach(gableX => {
+      const triGeo = new THREE.BufferGeometry();
+      const verts = new Float32Array([
+        0, 0, -roofRun,
+        0, 0,  roofRun,
+        0, RIDGE_Y - WALL_TOP_Y, 0
+      ]);
+      triGeo.setAttribute('position', new THREE.BufferAttribute(verts, 3));
+      triGeo.setIndex([0, 1, 2]);
+      triGeo.computeVertexNormals();
+      const gableTri = new THREE.Mesh(triGeo, wood());
+      gableTri.position.set(siteX + gableX, WALL_TOP_Y, 0);
+      g.add(tagAge(gableTri, ...lcs.walls));
+    });
+
+    // 6. CHIGI — X-crossed beams projecting up from the GABLE ENDS (±W/2)
+    // The X is in the Y-Z plane (gable plane), so rotation around X-axis.
+    const chigiLen = 1.6;
+    const chigiAngle = Math.PI / 6;  // 30° from vertical
+    [-W/2 - 0.05, W/2 + 0.05].forEach(x => {
+      [+1, -1].forEach(direction => {
+        const beam = new THREE.Mesh(
+          new THREE.BoxGeometry(0.07, chigiLen, 0.13),  // long axis Y
+          woodDk()
+        );
+        beam.position.set(siteX + x, RIDGE_Y + 0.20, 0);
+        beam.rotation.x = direction * chigiAngle;     // rotate in Y-Z plane
+        g.add(tagAge(beam, ...lcs.chigi));
+      });
+    });
+
+    // 7. KATSUOGI — round logs on ridge, spaced ALONG X (ridge), each lying ALONG Z (perpendicular)
+    const numKatsuogi = 10;
+    const katsuogiLen = 0.6;
+    const ridgeSpan = W * 0.82;
+    const ridgeSpacing = ridgeSpan / (numKatsuogi - 1);
+    for (let i = 0; i < numKatsuogi; i++) {
+      const x = -ridgeSpan/2 + i * ridgeSpacing;
+      const log = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, katsuogiLen, 8),
+        wood()
+      );
+      log.position.set(siteX + x, RIDGE_Y + 0.12, 0);
+      log.rotation.x = Math.PI / 2;   // rotate cylinder default-Y axis to lie along Z
+      g.add(tagAge(log, ...lcs.katsuogi));
+    }
+
+    // 8. THATCH — overlay slightly larger and offset above the roof structure
+    [+1, -1].forEach(side => {
+      const thatch = new THREE.Mesh(
+        new THREE.BoxGeometry(roofWidth + 0.15, 0.18, slopeLen + 0.08),
+        thatchMat()
+      );
+      thatch.position.set(siteX, (RIDGE_Y + WALL_TOP_Y) / 2 + 0.10, side * roofRun / 2);
+      thatch.rotation.x = side * slopeAngle;     // FIXED: matches roof rotation
+      g.add(tagAge(thatch, ...lcs.thatch));
+    });
+
+    // 9. VERANDA — narrow base band beneath the platform, between the posts.
+    // Shrunk to match the walls in plan: the platform's overhang is the wraparound
+    // walkway now, so the veranda just functions as a low foundation trim.
+    const veranda = new THREE.Mesh(
+      new THREE.BoxGeometry(W, 0.08, D),
+      woodLt()
+    );
+    veranda.position.set(siteX, FLOOR_Y - 0.10, 0);
+    g.add(tagAge(veranda, ...lcs.veranda));
+
+    // 10. STAIRS (kizahashi) — at +X gable end, leading up to the PLATFORM EDGE.
+    // The platform overhangs the walls by PLATFORM_OVER_X. The top step sits OUTSIDE
+    // the overhang (its near edge meets the platform's far edge), so the step's body
+    // doesn't penetrate up through the platform. Top tread is coplanar with platform top.
+    const STAIR_COUNT = 3;
+    const PLATFORM_TOP_Y = FLOOR_Y + PLATFORM_H;        // 1.0
+    const PLATFORM_X_EDGE = W/2 + PLATFORM_OVER_X;      // outermost edge of platform overhang
+    const STAIR_WIDTH_X = 0.20;
+    const STAIR_X_STEP = 0.20;
+    const STAIR_DEPTH = 0.85;
+    // Top step's NEAR edge meets the platform far edge → top step xCenter sits one half-width outward.
+    const STAIR_TOP_XCENTER = PLATFORM_X_EDGE + STAIR_WIDTH_X / 2;
+    for (let i = 0; i < STAIR_COUNT; i++) {
+      // i=0 → lowest, furthest from building.  i=STAIR_COUNT-1 → tallest, at the platform edge.
+      const treadTop = (i + 1) * (PLATFORM_TOP_Y / STAIR_COUNT);
+      const xOffset = STAIR_TOP_XCENTER + (STAIR_COUNT - 1 - i) * STAIR_X_STEP;
+      const step = new THREE.Mesh(
+        new THREE.BoxGeometry(STAIR_WIDTH_X, treadTop, STAIR_DEPTH),
+        wood()
+      );
+      step.position.set(siteX + xOffset, treadTop / 2, 0);
+      g.add(tagAge(step, ...lcs.stairs));
+    }
+
+    // 11. SITE GROUND PLOT (always visible — the consecrated ground)
+    const plot = new THREE.Mesh(
+      new THREE.BoxGeometry(W + 1.6, 0.05, D + 1.4),
+      mt('base', { opacity: 0.25 })
+    );
+    plot.position.set(siteX, -0.03, 0);
+    g.add(persist(plot));
+
+    // 12. KODENCHI POST (shin-no-mihashira) — single post at center of empty site
+    const kodenchi = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.05, 0.05, 0.55, 8),
+      woodDk()
+    );
+    kodenchi.position.set(siteX, 0.275, 0);
+    g.add(tag(kodenchi, ...lcs.kodenchi));
+
+    // 13. HINOKI LOGS (raw materials before construction) — piled at +X end, beyond stairs
+    if (lcs.hinoki) {
+      for (let i = 0; i < 6; i++) {
+        const log = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.08, 0.08, 1.6, 6),
+          wood()
+        );
+        const row = Math.floor(i / 3), col = i % 3;
+        log.position.set(siteX + W/2 + 1.2 + row * 0.18, 0.08, (col - 1) * 0.22);
+        log.rotation.x = Math.PI / 2;   // lie along Z
+        log.rotation.y = (r() - 0.5) * 0.08;
+        g.add(tag(log, ...lcs.hinoki));
+      }
+    }
+
+    // 14. REDISTRIBUTION PARTICLES (timber drifting outward to other shrines during dismantle)
+    if (lcs.redist) {
+      for (let i = 0; i < 35; i++) {
+        const a = r() * Math.PI * 2;
+        const dist = 2.0 + r() * 2.5;
+        const h = 0.4 + r() * 2.5;
+        const p = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.05 + r() * 0.04, 0),
+          mt('flow', { opacity: 0.55 })
+        );
+        p.position.set(siteX + Math.cos(a) * dist, h, Math.sin(a) * dist);
+        const offset = r() * (lcs.redist[2] - lcs.redist[0] - 0.05);
+        const start = lcs.redist[0] + offset;
+        g.add(tag(p, start, start + 0.03, start + 0.08, start + 0.13));
+      }
+    }
   }
-  const calderaPositions = [];
 
-  clusters.forEach(([cx, cz, scale], idx) => {
-    calderaPositions.push([cx, cz, 2.5*scale]);
-    const subGeo = new THREE.CylinderGeometry(2*scale, 2.1*scale, 0.06, 6);
-    displaceGeo(subGeo, 0.04, 2, idx*11);
-    g.add(new THREE.Mesh(subGeo, mt('flow',{opacity:0.18}))).position.set(cx, 0.06, cz);
+  // ═══ LIFECYCLE TIMING — 40-year cycle (two sengū per loop) ═══
+  // Half-cycle 1 (0-0.5): A standing → build B → ceremony → dismantle A → A empty.
+  // Half-cycle 2 (0.5-1): B standing → build A → ceremony → dismantle B → B empty.
+  // At t=1.0, the rebuilt A stands fully aged with B empty kodenchi — identical to t=0.
+  // Loop is seamless: no plot switch, the "new" shrine simply becomes the next "old."
+  //
+  // For Site A, each component has TWO periods:
+  //   period 1: visible from start, fades during first dismantle (0.34-0.46)
+  //   period 2: appears during rebuild (0.55-0.80), persists past the loop (fade 1.5)
+  // The aging system uses the active period's peak as the build-time anchor.
+  const A_LCS = {
+    posts:     [[-0.5, -0.4, 0.44, 0.46], [0.58, 0.60, 1.5, 1.6]],
+    platform:  [[-0.5, -0.4, 0.43, 0.45], [0.61, 0.63, 1.5, 1.6]],
+    munamochi: [[-0.5, -0.4, 0.41, 0.43], [0.64, 0.66, 1.5, 1.6]],
+    roof:      [[-0.5, -0.4, 0.39, 0.41], [0.66, 0.68, 1.5, 1.6]],
+    walls:     [[-0.5, -0.4, 0.37, 0.39], [0.69, 0.71, 1.5, 1.6]],
+    chigi:     [[-0.5, -0.4, 0.36, 0.38], [0.71, 0.73, 1.5, 1.6]],
+    katsuogi:  [[-0.5, -0.4, 0.35, 0.37], [0.73, 0.75, 1.5, 1.6]],
+    thatch:    [[-0.5, -0.4, 0.34, 0.36], [0.75, 0.77, 1.5, 1.6]],
+    veranda:   [[-0.5, -0.4, 0.42, 0.44], [0.77, 0.80, 1.5, 1.6]],
+    stairs:    [[-0.5, -0.4, 0.42, 0.44], [0.77, 0.80, 1.5, 1.6]],
+    kodenchi:  [0.46, 0.48, 0.55, 0.57],     // single period — only visible during empty middle
+    hinoki:    [0.55, 0.58, 0.66, 0.70],     // logs at A for second-half rebuild only
+    redist:    [0.34, 0.36, 0.46, 0.48],     // particles drift outward during first-half dismantle
+  };
 
-    const combR = 1.5*scale, cs = 0.42;
-    for (let q=-Math.ceil(combR/cs); q<=Math.ceil(combR/cs); q++) {
-      for (let rr=-Math.ceil(combR/cs); rr<=Math.ceil(combR/cs); rr++) {
-        if (Math.abs(q+rr)>Math.ceil(combR/cs)) continue;
-        const x=q*cs*0.87+rr*cs*0.435, z=rr*cs*0.755;
-        if (Math.sqrt(x*x+z*z)>combR) continue;
-        const n=fbm(x*2+idx*10,z*2,0); if(n<0.3) continue;
-        g.add(new THREE.Mesh(cellGeo, mt('agent',{opacity:0.3+n*0.1}))).position.set(cx+x,0.2,cz+z);
-        if(r()>0.45) g.add(new THREE.Mesh(capGeo, mt('time',{opacity:0.4}))).position.set(cx+x,0.4,cz+z);
-      }
-    }
+  // For Site B, components have a single period (built first half, dismantled second half).
+  // Kodenchi has TWO periods: visible at start (before B build) AND at end (after B dismantle).
+  const B_LCS = {
+    posts:     [0.06, 0.08, 0.94, 0.96],
+    platform:  [0.09, 0.11, 0.93, 0.95],
+    munamochi: [0.13, 0.15, 0.91, 0.93],
+    roof:      [0.16, 0.18, 0.89, 0.91],
+    walls:     [0.19, 0.21, 0.87, 0.89],
+    chigi:     [0.21, 0.23, 0.86, 0.88],
+    katsuogi:  [0.23, 0.25, 0.85, 0.87],
+    thatch:    [0.25, 0.27, 0.84, 0.86],
+    veranda:   [0.27, 0.30, 0.92, 0.94],
+    stairs:    [0.27, 0.30, 0.92, 0.94],
+    kodenchi:  [[-0.5, -0.4, 0.06, 0.08], [0.96, 0.98, 1.5, 1.6]],   // multi: at start AND end
+    hinoki:    [0.03, 0.06, 0.16, 0.20],     // logs at B for first-half build
+    redist:    [0.84, 0.86, 0.96, 0.98],     // particles drift outward during second-half dismantle
+  };
 
-    for (let si=0; si<3; si++) {
-      const sa=(si/3)*Math.PI*2+r()*0.5, sd=combR*0.8;
-      const sx=cx+Math.cos(sa)*sd, sz2=cz+Math.sin(sa)*sd;
-      for (let layer=0; layer<5; layer++) for (let ci=0; ci<5; ci++) {
-        const ca=(ci/5)*Math.PI*2, cd=ci===0?0:0.15;
-        g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.03,6), mt(layer%2===0?'flow':'flowLt',{opacity:0.3}))).position.set(sx+Math.cos(ca)*cd, 0.15+layer*0.035, sz2+Math.sin(ca)*cd);
-      }
-    }
+  buildShrine(SITE_A_X, A_LCS);
+  buildShrine(SITE_B_X, B_LCS);
 
-    // Per-cluster caldera (open top, 10 layers)
-    for (let l=0; l<10; l++) {
-      const cRad = 2.5*scale + l*0.1;
-      const cGeo = new THREE.SphereGeometry(cRad, 32, 22, 0, Math.PI*2, 0.5, Math.PI*0.5);
-      displaceGeo(cGeo, 0.08+l*0.006, 1+l*0.15, l*7+idx*30);
-      const cPos = cGeo.attributes.position;
-      for (let i=0; i<cPos.count; i++) {
-        const y=cPos.getY(i);
-        if (y>cRad*0.1) { const flare=1+(y/cRad-0.1)*0.4; cPos.setX(i,cPos.getX(i)*flare); cPos.setZ(i,cPos.getZ(i)*flare); }
-      }
-      cPos.needsUpdate=true; cGeo.computeVertexNormals();
-      g.add(new THREE.Mesh(cGeo, new THREE.MeshStandardMaterial({
-        color:new THREE.Color().setHSL(0.12,currentTheme.envSat+0.03,currentTheme.envelope+0.03+l*0.004),
-        transparent:true, opacity:0.025+l*0.003, depthWrite:false, side:THREE.DoubleSide, roughness:0.65
-      }))).position.set(cx, -0.2, cz);
+  // ═══ SENGYO CEREMONIES — kami transfer (twice per cycle) ═══
+  // First sengyo (~t=0.32): A → B, after B is fully complete and before A dismantles.
+  // Second sengyo (~t=0.82): B → A, after A is rebuilt and before B dismantles.
+  [
+    { startBaseT: 0.32, fromX: SITE_A_X, toX: SITE_B_X },
+    { startBaseT: 0.82, fromX: SITE_B_X, toX: SITE_A_X },
+  ].forEach(({ startBaseT, fromX, toX }) => {
+    for (let i = 0; i < 12; i++) {
+      const tProgress = i / 11;
+      const x = fromX + (toX - fromX) * tProgress;
+      const arc = Math.sin(tProgress * Math.PI) * 1.1;
+      const sengyo = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.08, 0),
+        mt('time', { opacity: 0.75 })
+      );
+      sengyo.position.set(x, 1.7 + arc, 0);
+      const startT = startBaseT + i * 0.005;
+      g.add(tag(sengyo, startT, startT + 0.02, startT + 0.05, startT + 0.08));
     }
   });
 
-  // ── PATHS ──
-  for (let i=0; i<12; i++) {
-    const a0=r()*Math.PI*2, len=4+r()*7, pts=[];
-    for (let s=0; s<8; s++) { const t=s/7; pts.push(new THREE.Vector3(Math.cos(a0+(r()-0.5)*t*0.5)*t*len, 0.08, Math.sin(a0+(r()-0.5)*t*0.5)*t*len)); }
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),12,0.04,4,false), mt('agentLt',{opacity:0.18})));
-  }
-
-  // ── MYCELIUM ──
-  clusters.forEach(([cx1,cz1],i) => {
-    if(i===0) return;
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
-      new THREE.Vector3(cx1,0.05,cz1), new THREE.Vector3(cx1*0.5+(r()-0.5)*0.5,-0.2,cz1*0.5+(r()-0.5)*0.5), new THREE.Vector3(0,0.05,0)
-    ]),8,0.02,4,false), mt('flowLt',{opacity:0.15})));
-  });
-
-  // ── PERFORATED DISTRICT CANOPY — holes above each caldera ──
-  for (let l=0; l<14; l++) {
-    const rad = 12+l*0.16;
-    const geo = new THREE.SphereGeometry(rad, 48, 32, 0, Math.PI*2, 0, Math.PI*0.32);
-    displaceGeo(geo, 0.06+l*0.005, 0.6+l*0.08, l*5.5);
-    const pos = geo.attributes.position;
-    for (let i=0; i<pos.count; i++) {
-      const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
-      for (const [ccx,ccz,ccr] of calderaPositions) {
-        const dx=x-ccx, dz=z-ccz, hDist=Math.sqrt(dx*dx+dz*dz);
-        if (hDist < ccr*1.2) {
-          const pushFactor = 1+(1-hDist/(ccr*1.2))*0.8;
-          const angle = Math.atan2(dz,dx);
-          pos.setX(i, ccx+Math.cos(angle)*hDist*pushFactor);
-          pos.setZ(i, ccz+Math.sin(angle)*hDist*pushFactor);
-          pos.setY(i, y-(1-hDist/(ccr*1.2))*1.5);
-        }
-      }
-      if (y<rad*0.85) {
-        const tn=fbm(x*1.2+l,y+l,z*1.2), rimDist=(rad*0.85-y)/rad;
-        pos.setY(i, y+rimDist*tn*rad*0.1);
-        pos.setX(i, pos.getX(i)*(1+rimDist*0.2));
-        pos.setZ(i, pos.getZ(i)*(1+rimDist*0.2));
-      }
-    }
-    pos.needsUpdate=true; geo.computeVertexNormals();
-    g.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      color:new THREE.Color().setHSL(0.11,currentTheme.envSat+0.02,currentTheme.envelope+0.03+l*0.003),
-      transparent:true, opacity:0.02+l*0.002, depthWrite:false, side:THREE.DoubleSide, roughness:0.6
-    }))).position.y = 2;
-  }
-
-  // ── DECOMPOSITION ──
-  for (let i=0; i<45; i++) {
-    const a=r()*Math.PI*2, d=9+r()*3;
-    const frag = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,0.04,6,1,true), mt(r()>0.5?'time':r()>0.5?'agent':'flow',{opacity:0.05+r()*0.06}));
-    frag.position.set(Math.cos(a)*d, r()*0.2, Math.sin(a)*d);
-    frag.rotation.set(r()*Math.PI, r(), r());
-    g.add(frag);
-  }
-  g.position.y = -0.3;
+  updateLifecycle(lifecycleT);
 }
 
-const COLORS={flow:"#E91E8C",agent:"#33DD33",time:"#888"};
-const SPECS={
-  lifecycle:{fn:genLifecycle,name:"LIFECYCLE",arch:"WASP NEST \u00B7 BIRTH TO DEATH",cam:[8,5,8],tgt:[0,-1,0],isLifecycle:true,rows:[],manifesto:"",ledger:[]},
-  wasp_nest:{fn:genWaspNest,name:"WASP NEST",arch:"METABOLISM",cam:[8,6,8],tgt:[0,-1,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL BARK\n< 50m radius","CHEW FIBER\nMandible processing","MIX SALIVA\nBinding agent","FORM PULP\nWet application","DRY + HARDEN\nAmbient curing"],right:["DETACH\nAnchor weakens","FALL TO GROUND\nGravity","DISSOLVE\nOne winter","RETURN TO SOIL\nNutrient cycle"]},{cat:"agent",label:"LABOR + CONTROL",left:["QUEEN FOUNDS\nSingle founder","WORKERS HATCH\nFirst generation","WORKERS BUILD\n40 trips/day","WORKERS = BUILDERS\n= INHABITANTS"],right:["QUEEN LEAVES\nNew queens depart","COLONY DISPERSES\nWorkers die","NO MAINTENANCE\nAbandoned by design"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SPRING START\nQueen selects site","SUMMER PEAK\nMaximum colony","FALL DECLINE\nNo new brood"],right:["FIRST FROST\nScheduled death","1 WINTER\nFull decomposition","NUTRIENTS CYCLE\nFeed next season","REPEAT\nNew queen, new nest"]}],manifesto:"This system optimizes for one season. Every material is local, every loop is closed, every element knows when it ends. Death is not failure \u2014 it is the design.",ledger:[["DEATH PLAN","Total decomposition, scheduled",false],["WASTE","Closed loop",false],["LABOR","Visible \u2014 builder IS inhabitant",false],["SUPPLY CHAIN","< 50m, visible in object",false]]},
-  h100:{fn:genH100,name:"NVIDIA H100",arch:"OBSOLESCENCE",cam:[12,6,12],tgt:[0,1,-3],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["SILICA MINE\nSpruce Pine, NC","CARGO SHIP\n6,000 km","PURIFICATION\nGermany","CRYSTAL GROWTH\nJapan","WAFER SLICE\nTaiwan","CHIP FABRICATE\nTSMC, Taiwan","PCB ASSEMBLY\nFoxconn, China","AIR FREIGHT\n12,000 km"],right:["E-WASTE\nDESTINATION?","MATERIAL\nRECOVERY?","RARE EARTH\nRETURN?","WATER\nREMEDIATION?","THERMAL\nWASTE?"]},{cat:"agent",label:"LABOR + CONTROL",left:["DRC MINERS\nCobalt, artisanal","CHEMICAL ENG.\nWacker Chemie","FAB TECHS\nTSMC cleanroom","ASML OPERATORS\nEUV lithography","FOXCONN WORKERS\n300K, 12hr shifts","DATA CENTER OPS\nRemote monitoring"],right:["WORKER\nTRANSITION?","LABOR\nACCOUNTABILITY?"]},{cat:"time",label:"LIFESPAN + DEATH",left:["DESIGN CYCLE\n3 years R&D","FABRICATION\n3 months","DEPLOYMENT\nImmediate","OPERATIONAL\n18 months"],right:["DECOMMISSION\nPLAN?","END OF LIFE\nPROTOCOL?","FACILITY\nTRANSITION?","SITE\nREMEDIATION?","GENERATION\nHANDOFF?","LONG-TERM\nIMPACT?"]}],manifesto:"This system optimizes for computational throughput at any cost. No element has a decommission plan. The death strategy is: become someone else\u2019s problem.",ledger:[["DEATH PLAN","None",true],["WASTE","Open loop \u2014 externalized",false],["LABOR","Hidden at every stage",false],["SUPPLY CHAIN","6 continents, illegible",false]]},
-  manhattan:{fn:genManhattan,name:"MANHATTAN GRID",arch:"PALIMPSEST",cam:[14,10,14],tgt:[0,0,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LENAPE LAND\n55 ecosystems","TIMBER + STONE\nLocal quarries","BRICK + STEEL\nRegional mills","CONCRETE + GLASS\nGlobal supply","INFRASTRUCTURE\nWater, gas, steam"],right:["DEMOLITION\nDEBRIS?","MATERIAL\nRECOVERY?","PIPE\nREMOVAL?"]},{cat:"agent",label:"LABOR + CONTROL",left:["COMMISSIONERS\n1811 plan","DEVELOPERS\nLot by lot","CONSTRUCTION\nUnion labor","MAINTENANCE\nBuilding supers"],right:["REBUILD\nSame lots, new bldgs","REZONE\nProgrammatic shift","OWNERSHIP\nTURNOVER?"]},{cat:"time",label:"LIFESPAN + DEATH",left:["GRID: 1811\nNo end date","BUILDINGS\n20\u2013200 years","UNDERGROUND\nSince 1842"],right:["BUILDINGS DIE\nDemolish + replace","GRID PERSISTS\nNo removal mechanism","UNDERGROUND\nACCUMULATES?","LONG-TERM\nFUTURE?"]}],manifesto:"This system optimizes for nothing, and that is its genius. The grid makes no claim about what should be built \u2014 only where. Underground, nothing is ever removed.",ledger:[["DEATH PLAN","Buildings: demolish + replace. Grid: none",true],["WASTE","Accumulated underground",false],["LABOR","Partially visible",false],["SUPPLY CHAIN","Market-driven, variable",false]]},
-  hybrid:{fn:genHybrid,name:"H100 \u00D7 WASP NEST",arch:"PROPOSITION",cam:[10,6,10],tgt:[0,1,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL CELLULOSE\nBiodegradable substrate","MYCELIUM TRACES\nGrown, not etched","MINERAL SALTS\nLocal soil extraction","ORGANIC ASSEMBLY\nAmbient temperature"],right:["CONTROLLED DECAY\n6-month decomposition","MATERIAL HARVEST\nComponents separated","SUBSTRATE RETURN\nCellulose to soil","MINERAL RECLAIM\nSalts re-enter cycle"]},{cat:"agent",label:"LABOR + CONTROL",left:["LOCAL FABRICATION\nOn-site growth facility","BUILDER = OPERATOR\nSame team, full cycle","OPEN ARCHITECTURE\nAll processes visible","COMMUNITY GOVERNED\nNo hidden hierarchy"],right:["OPERATOR MAINTAINS\nSame team until death","KNOWLEDGE TRANSFER\nNext generation trained","GRACEFUL HANDOFF\nPlanned succession"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SEASON START\nNew unit grown","PEAK COMPUTE\n4\u20136 months","EFFICIENCY DECLINE\nGraceful degradation"],right:["SCHEDULED DEATH\nPredetermined end date","DECOMPOSITION\nControlled dissolution","NUTRIENT RETURN\nFeeds next generation","NEW UNIT GROWS\nCycle repeats"]}],manifesto:"What if a chip knew how to die? This is the H100 redesigned with the wasp nest\u2019s constitution: local materials, visible labor, closed loops, and a death plan written into the first line of its design. The envelope is no longer a void \u2014 it is a season.",ledger:[["DEATH PLAN","Scheduled decomposition at 6 months",false],["WASTE","Closed loop \u2014 all materials return",false],["LABOR","Visible \u2014 builder operates and decommissions",false],["SUPPLY CHAIN","Local, visible in finished object",false]]},
-  manhattan_hybrid:{fn:genManhattanHybrid,name:"MANHATTAN \u00D7 WASP NEST",arch:"PROPOSITION",cam:[12,8,12],tgt:[0,0,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL TIMBER\nForest within watershed","CLAY + EARTH\nSite excavation","FIBER BINDING\nOrganic adhesives","SEASONAL HARVEST\nMaterial gathered in spring"],right:["STRUCTURE RELEASED\nEnd of season","MATERIAL SEPARATED\nTimber, clay, fiber sorted","TIMBER COMPOSTED\nReturns to forest floor","CLAY RETURNED\nBackfill to excavation"]},{cat:"agent",label:"LABOR + CONTROL",left:["NO COMMISSIONERS\nNo imposed grid","COMMUNITY PATHS\nRoutes emerge from use","BUILDER = INHABITANT\nSame people, full cycle","COLLECTIVE GOVERNANCE\nNo landlord hierarchy"],right:["INHABITANTS DISASSEMBLE\nSame builders take down","PATHS DISSOLVE\nNo permanent right-of-way","KNOWLEDGE PASSED\nNext season\u2019s builders trained"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SPRING FOUNDING\nNew district grown","SUMMER OCCUPATION\nPeak density","FALL THINNING\nEdge structures released"],right:["WINTER DISSOLUTION\nAll structures decompose","GROUND RESTS\nSoil recovers one season","SPRING REGROWTH\nNew district, new layout","NO GRID PERSISTS\nNothing is permanent"]}],manifesto:"What if a city knew it was seasonal? This is Manhattan redesigned with the wasp nest\u2019s constitution: no permanent grid, no underground accumulation, no buildings that outlive their builders. The city grows each spring and dissolves each winter. The ground remembers nothing. Every layout is new.",ledger:[["DEATH PLAN","Total seasonal dissolution",false],["WASTE","Closed loop \u2014 all materials return to site",false],["LABOR","Visible \u2014 builders are inhabitants",false],["SUPPLY CHAIN","Watershed-local, visible",false]]},
-  convergence:{fn:genConvergence,name:"THE SEASONAL DATA CENTER",arch:"CONVERGENCE",cam:[14,8,14],tgt:[0,0.5,0],rows:[{cat:"flow",label:"MATERIAL FLOW",left:["LOCAL SUBSTRATE\nCellulose from watershed","MYCELIUM NETWORK\nGrown between clusters","MINERAL CYCLING\nSoil-to-chip-to-soil","THERMAL LOOPS\nHeat feeds greenhouses"],right:["CLUSTER RELEASE\nEdge nodes dissolve first","MATERIAL SORTING\nOrganic from mineral","COMPOSTING\nCellulose returns to forest","MINERAL RETURN\nSalts re-enter soil"]},{cat:"agent",label:"LABOR + CONTROL",left:["COMMUNITY SITING\nCollective decision","GROWERS = OPERATORS\nSame team grows + runs","OPEN COMPUTATION\nAll processes visible","NO DATA CENTER CORP\nCooperative governance"],right:["OPERATORS DECOMM.\nSame team takes down","CLUSTER HANDOFF\nKnowledge to next team","SITE REMEDIATION\nGrowers restore ground"]},{cat:"time",label:"LIFESPAN + DEATH",left:["SPRING GROWTH\nNew clusters germinate","SUMMER PEAK\nMaximum compute density","FALL MIGRATION\nWorkloads shift to new district"],right:["WINTER DISSOLUTION\nAll hardware decomposes","GROUND FALLOW\nSoil recovers","SPRING REGROWTH\nNew layout, new clusters","PERPETUAL CYCLE\nNo generation outlives its season"]}],manifesto:"This is what a data center looks like when it knows how to die. Nine compute clusters grow from local substrate each spring, connected by mycelium traces, wrapped in a seasonal envelope. In winter the district dissolves. The ground rests. In spring, a new district grows \u2014 different layout, same watershed, same community. The computation is seasonal. The land is permanent.",ledger:[["DEATH PLAN","Seasonal dissolution \u2014 entire district",false],["WASTE","Closed loop \u2014 thermal energy feeds adjacent agriculture",false],["LABOR","Visible \u2014 growers are operators are decommissioners",false],["SUPPLY CHAIN","Watershed-local, 100% visible",false]]}
 
-
-};
-
-// ═══ BREEDING RELATIONSHIPS ═══
-const BREEDING = {
-  wasp_nest: { partners: [], results: {} },
-  h100: { partners: ['wasp_nest'], results: { wasp_nest: 'hybrid' } },
-  manhattan: { partners: ['wasp_nest'], results: { wasp_nest: 'manhattan_hybrid' } },
-  hybrid: { partners: ['manhattan_hybrid'], results: { manhattan_hybrid: 'convergence' } },
-  manhattan_hybrid: { partners: ['hybrid'], results: { hybrid: 'convergence' } },
-  convergence: { partners: [], results: {} },
-  lifecycle: { partners: [], results: {} }
+const SPECS = {
+  wasp_nest: {
+    fn: genLifecycle,
+    name: "WASP NEST",
+    arch: "METABOLISM",
+    cam: [8, 5, 8],
+    tgt: [0, -1, 0],
+    isLifecycle: true,
+    constitution: [
+      "All materials are sourced within 50 meters.",
+      "Builder, inhabitant, and material are one agent.",
+      "Lifespan is one season, spring to first frost.",
+      "Death is scheduled, not accidental.",
+      "Every loop closes. Nothing is exported."
+    ],
+    stages: [
+      { t: 0,    label: 'RAW MATERIALS', color: '#444' },
+      { t: 0.12, label: 'HARVEST',       color: '#444' },
+      { t: 0.22, label: 'FIRST BUILD',   color: '#333' },
+      { t: 0.38, label: 'GROWTH',        color: '#222' },
+      { t: 0.55, label: 'PEAK COLONY',   color: '#222' },
+      { t: 0.72, label: 'DECLINE',       color: '#555' },
+      { t: 0.82, label: 'ABANDON',       color: '#777' },
+      { t: 0.88, label: 'FALL',          color: '#888' },
+      { t: 0.93, label: 'DECOMPOSE',     color: '#999' },
+      { t: 1.0,  label: 'RETURN',        color: '#aaa' }
+    ]
+  },
+  coral_reef: {
+    fn: genCoralLifecycle,
+    name: "CORAL REEF",
+    arch: "FOSSIL",
+    cam: [8, 5, 8],
+    tgt: [0, 1.6, 0],
+    zoom: 3.2,
+    maxZoom: 5.5,
+    minZoom: 2,
+    isLifecycle: true,
+    constitution: [
+      "All material is mineral, drawn from seawater.",
+      "The body and the architecture are the same object.",
+      "Each generation builds on the bones of the last.",
+      "Death leaves a permanent skeleton.",
+      "The reef is its own foundation."
+    ],
+    stages: [
+      { t: 0,    label: 'SETTLEMENT',     color: '#444' },
+      { t: 0.15, label: 'EARLY GROWTH',   color: '#333' },
+      { t: 0.30, label: 'FIRST BLEACH',   color: '#444' },
+      { t: 0.45, label: 'TURNOVER',       color: '#555' },
+      { t: 0.60, label: 'LATE GROWTH',    color: '#666' },
+      { t: 0.75, label: 'BLEACH SPREADS', color: '#777' },
+      { t: 0.88, label: 'SKELETAL',       color: '#888' },
+      { t: 0.96, label: 'SUBSTRATE',      color: '#aaa' }
+    ]
+  },
+  ise_shrine: {
+    fn: genIseShrine,
+    name: "ISE SHRINE",
+    arch: "RENEWAL",
+    cam: [10, 7, 11],
+    tgt: [0, 1.7, 0],
+    zoom: 6.5,
+    maxZoom: 9,
+    minZoom: 3,
+    isLifecycle: true,
+    constitution: [
+      "Permanence is achieved through repetition.",
+      "The shrine alternates between two adjacent sites.",
+      "Every twenty years, a new shrine is built next to the old.",
+      "Old timber disperses to other shrines; nothing is wasted.",
+      "Empty ground waits, marked by a single post."
+    ],
+    stages: [
+      { t: 0.05, label: 'HARVEST',    color: '#444' },
+      { t: 0.32, label: 'CEREMONY',   color: '#CC8800' },
+      { t: 0.42, label: 'DISMANTLE',  color: '#666' },
+      { t: 0.55, label: 'HARVEST',    color: '#444' },
+      { t: 0.82, label: 'CEREMONY',   color: '#CC8800' },
+      { t: 0.92, label: 'DISMANTLE',  color: '#666' }
+    ]
+  }
 };
 
 const VALUE_SCORES = {
-  wasp_nest: { death:10, waste:10, labor:10, supply:10 },
-  h100: { death:0, waste:1, labor:0, supply:1 },
-  manhattan: { death:3, waste:2, labor:5, supply:4 },
-  hybrid: { death:9, waste:10, labor:9, supply:10 },
-  manhattan_hybrid: { death:9, waste:10, labor:10, supply:9 },
-  convergence: { death:10, waste:10, labor:10, supply:10 },
-  lifecycle: { death:10, waste:10, labor:10, supply:10 }
+  wasp_nest:  { death: 10, waste:  9, labor: 'n/a', supply: 10 },
+  coral_reef: { death:  6, waste:  8, labor: 'n/a', supply:  9 },
+  ise_shrine: { death: 10, waste: 10, labor:   7,   supply:  8 }
 };
 
-const BASE_SPECIMENS = ['wasp_nest', 'h100', 'manhattan'];
-const HYBRID_SPECIMENS = ['hybrid', 'manhattan_hybrid'];
-const ALL_POSSIBLE_HYBRIDS = [
-  { parents: ['h100','wasp_nest'], key:'hybrid', exists:true },
-  { parents: ['manhattan','wasp_nest'], key:'manhattan_hybrid', exists:true },
-  { parents: ['h100','manhattan'], key:null, exists:false },
-  { parents: ['hybrid','manhattan_hybrid'], key:'convergence', exists:true },
-];
+const BASE_SPECIMENS = ['wasp_nest', 'coral_reef', 'ise_shrine'];
 
 // ═══ STATE ═══
-let currentPage = 'home'; // 'home' | 'detail'
+let currentPage = 'home';
 let currentKey = null;
-let showTree = false;
-let showCrossbreed = false;
-let currentMode = 'xray';
+let currentMode = 'ghosted';
+let lifecyclePlaying = true;
+let isScrubbing = false;
 
 // ═══ THREE.JS ═══
 let scene, camera, renderer, modelGroup;
 const clipPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
 let sectionEnabled = false;
 
-// Camera control state
 let camRotY = 0.8, camRotX = 0.4;
 let camZoom = 11;
 let camPanX = 0, camPanY = 0;
@@ -1055,7 +1128,6 @@ function initThree() {
   [[10,18,10,0.5],[-8,10,-6,0.2],[0,5,15,0.15]].forEach(([x,y,z,i])=>{const d=new THREE.DirectionalLight(0xffffff,i);d.position.set(x,y,z);scene.add(d);});
   modelGroup = new THREE.Group(); scene.add(modelGroup);
 
-  // Event listeners
   const canvas = renderer.domElement;
   canvas.style.cursor = 'grab';
 
@@ -1088,7 +1160,6 @@ function initThree() {
   canvas.addEventListener('mouseup', () => {
     isDragging = false; isPanning = false;
     canvas.style.cursor = 'grab';
-    // Resume auto-rotate after 2 seconds
     setTimeout(() => { if (!isDragging) autoRotate = true; }, 2000);
   });
 
@@ -1099,13 +1170,14 @@ function initThree() {
 
   canvas.addEventListener('wheel', e => {
     e.preventDefault();
-    camZoom = Math.max(3, Math.min(25, camZoom + (e.deltaY > 0 ? 0.8 : -0.8)));
+    const maxZ = (SPECS[currentKey] && SPECS[currentKey].maxZoom) || 25;
+    const minZ = (SPECS[currentKey] && SPECS[currentKey].minZoom) || 3;
+    camZoom = Math.max(minZ, Math.min(maxZ, camZoom + (e.deltaY > 0 ? 0.8 : -0.8)));
     updateCamera();
   }, { passive: false });
 
   canvas.addEventListener('contextmenu', e => e.preventDefault());
 
-  // Touch support
   let lastTouchDist = 0;
   canvas.addEventListener('touchstart', e => {
     if (e.touches.length === 1) {
@@ -1129,7 +1201,9 @@ function initThree() {
       updateCamera();
     } else if (e.touches.length === 2) {
       const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      camZoom = Math.max(3, Math.min(25, camZoom + (lastTouchDist - dist) * 0.05));
+      const maxZ = (SPECS[currentKey] && SPECS[currentKey].maxZoom) || 25;
+      const minZ = (SPECS[currentKey] && SPECS[currentKey].minZoom) || 3;
+      camZoom = Math.max(minZ, Math.min(maxZ, camZoom + (lastTouchDist - dist) * 0.05));
       lastTouchDist = dist;
       updateCamera();
     }
@@ -1146,7 +1220,25 @@ function initThree() {
     requestAnimationFrame(animate);
     elapsed += 0.016;
     if (autoRotate) { camRotY += autoRotSpeed; updateCamera(); }
-    // Wasp animation
+
+    // Auto-play lifecycle
+    if (lifecyclePlaying && !isScrubbing && currentKey && SPECS[currentKey] && SPECS[currentKey].isLifecycle) {
+      lifecycleT += 0.0005; // ~33 second cycle (2-swap means two sengū per loop)
+      if (lifecycleT > 1) lifecycleT = 0;
+      updateLifecycle(lifecycleT);
+      const scrubber = document.getElementById('lc-scrubber');
+      if (scrubber) scrubber.value = lifecycleT;
+      const stageLabel = document.getElementById('lc-stage');
+      if (stageLabel) {
+        const stages = SPECS[currentKey].stages || [];
+        if (stages.length) {
+          const st = stages.reduce((best, s) => lifecycleT >= s.t ? s : best, stages[0]);
+          stageLabel.textContent = st.label;
+          stageLabel.style.color = st.color;
+        }
+      }
+    }
+
     animatedWasps.forEach(w => {
       if (!w.mesh.visible) return;
       const o = w.orbit, t = elapsed * o.speed + o.phase;
@@ -1198,10 +1290,9 @@ function loadModel(key) {
     spec.fn(modelGroup);
     applyMode();
     if (sectionEnabled) applySection();
-    // Reset camera to spec defaults
     camTarget = spec.tgt || [0, 0, 0];
     camPanX = 0; camPanY = 0;
-    // Derive rotation from cam position
+    camZoom = spec.zoom || 11;
     const c = spec.cam;
     camRotY = Math.atan2(c[0], c[2]);
     camRotX = Math.atan2(c[1], Math.sqrt(c[0] * c[0] + c[2] * c[2]));
@@ -1248,7 +1339,6 @@ function goHome() {
 function goDetail(key) {
   currentPage = 'detail'; currentKey = key;
   render();
-  // Init Three after DOM is ready
   requestAnimationFrame(() => {
     if (!renderer) initThree(); else {
       const vp = document.getElementById('viewport');
@@ -1259,58 +1349,51 @@ function goDetail(key) {
   });
 }
 
-function toggleTree() {
-  showTree = !showTree;
-  document.getElementById('tree-overlay').style.display = showTree ? 'flex' : 'none';
-  document.getElementById('tree-toggle').className = 'icon-btn' + (showTree ? ' active' : '');
-  if (showTree) renderTree();
-}
-
-function openCrossbreed() {
-  showCrossbreed = true;
-  document.getElementById('crossbreed-modal').style.display = 'flex';
-  renderCrossbreedModal();
-}
-
-function closeCrossbreed() {
-  showCrossbreed = false;
-  document.getElementById('crossbreed-modal').style.display = 'none';
-}
-
 // ═══ SCORE DISPLAY ═══
 function scoreBar(scores) {
-  const total = (scores.death + scores.waste + scores.labor + scores.supply) / 4;
-  const pct = Math.round(total * 10);
+  // Average only numeric scores; n/a is excluded from the average rather than counted as 0.
+  const nums = [scores.death, scores.waste, scores.labor, scores.supply].filter(v => typeof v === 'number');
+  if (nums.length === 0) return `<span style="font-size:13px;letter-spacing:0.1em;color:#999">— /10</span>`;
+  const total = nums.reduce((a, b) => a + b, 0) / nums.length;
+  const pct = Math.round(total);
   return `<span style="font-size:13px;letter-spacing:0.1em;color:${pct>6?'#33DD33':pct>3?'#FFB830':'#E91E8C'}">${pct}/10</span>`;
 }
 
 function scoreDetail(scores) {
-  const items = [['DEATH PLAN',scores.death],['WASTE',scores.waste],['LABOR',scores.labor],['SUPPLY',scores.supply]];
-  return items.map(([k,v])=>`<span style="color:${v>6?'#33DD33':v>3?'#FFB830':'#E91E8C'}">${k}: ${v}/10</span>`).join('  ');
+  const items = [['DEATH',scores.death],['WASTE',scores.waste],['LABOR',scores.labor],['SUPPLY',scores.supply]];
+  return items.map(([k,v]) => {
+    if (typeof v !== 'number') return `<span style="color:#999">${k}: ${v}</span>`;
+    const color = v>6?'#33DD33':v>3?'#FFB830':'#E91E8C';
+    return `<span style="color:${color}">${k}: ${v}/10</span>`;
+  }).join('  ');
 }
 
 // ═══ RENDER ═══
 function render() {
   const main = document.getElementById('main-content');
-  const bc = document.getElementById('breadcrumb');
+  const topbarMeta = document.getElementById('topbar-meta');
+  const topbarTitle = document.getElementById('topbar-title');
+
+  // Topbar title: prefix with a back-arrow on detail pages so the click affordance is obvious.
+  if (topbarTitle) {
+    topbarTitle.innerHTML = currentPage === 'detail'
+      ? '<span class="topbar-back-arrow">←</span>CONSTITUTION READER'
+      : 'CONSTITUTION READER';
+  }
 
   if (currentPage === 'home') {
-    bc.innerHTML = '<span class="current">SPECIMENS</span>';
+    if (topbarMeta) topbarMeta.innerHTML = '';
     main.innerHTML = `
       <div class="home">
-        <div class="home-subtitle">SELECT A SPECIMEN TO ANALYZE</div>
+        <div class="home-tagline">
+          Meaning determines what a system leaves behind.<br/>
+          <span class="line2">What a thing believes in is what it does with its waste, its labor, and its death.</span>
+        </div>
         <div class="specimen-grid" id="home-grid"></div>
       </div>
     `;
     const grid = document.getElementById('home-grid');
-    [...BASE_SPECIMENS, 'more'].forEach(key => {
-      if (key === 'more') {
-        const card = document.createElement('div');
-        card.className = 'specimen-card disabled';
-        card.innerHTML = `<div class="card-name" style="color:#888">MORE COMING</div><div class="card-arch">...</div><div style="height:140px;display:flex;align-items:center;justify-content:center;color:#555;font-size:24px">+</div>`;
-        grid.appendChild(card);
-        return;
-      }
+    BASE_SPECIMENS.forEach(key => {
       const spec = SPECS[key];
       const scores = VALUE_SCORES[key];
       const card = document.createElement('div');
@@ -1319,7 +1402,7 @@ function render() {
       card.innerHTML = `
         <div class="card-name">${spec.name}</div>
         <div class="card-arch">${spec.arch}</div>
-        <div style="height:140px;border:1px solid #f4f4f4;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px;letter-spacing:0.1em">CLICK TO VIEW</div>
+        <div class="card-cta">CLICK TO READ</div>
         <div class="card-score">${scoreBar(scores)}</div>
       `;
       grid.appendChild(card);
@@ -1328,255 +1411,132 @@ function render() {
 
   if (currentPage === 'detail') {
     const spec = SPECS[currentKey];
-    const isLC = spec.isLifecycle;
-    const breeding = BREEDING[currentKey];
+    const isLC = !!spec.isLifecycle;
     const scores = VALUE_SCORES[currentKey];
 
-    // Breadcrumb
-    const isBase = BASE_SPECIMENS.includes(currentKey);
-    const isHybrid = HYBRID_SPECIMENS.includes(currentKey);
-    if (isBase || currentKey === 'lifecycle') {
-      bc.innerHTML = `<span onclick="goHome()">SPECIMENS</span><span class="sep">›</span><span class="current">${spec.name}</span>`;
-    } else if (isHybrid) {
-      const parentKey = currentKey === 'hybrid' ? 'h100' : 'manhattan';
-      bc.innerHTML = `<span onclick="goHome()">SPECIMENS</span><span class="sep">›</span><span onclick="goDetail('${parentKey}')">${SPECS[parentKey].name}</span><span class="sep">›</span><span class="current">${spec.name}</span>`;
-    } else {
-      bc.innerHTML = `<span onclick="goHome()">SPECIMENS</span><span class="sep">›</span><span class="current">${spec.name}</span>`;
+    // Stacked scores in topbar
+    if (topbarMeta) {
+      const items = [['DEATH', scores.death], ['WASTE', scores.waste], ['LABOR', scores.labor], ['SUPPLY', scores.supply]];
+      topbarMeta.innerHTML = items.map(([k, v]) => {
+        if (typeof v !== 'number') {
+          return `<div class="topbar-meta-line" style="color:#999">${k}: ${v}</div>`;
+        }
+        const color = v > 6 ? '#33DD33' : v > 3 ? '#FFB830' : '#E91E8C';
+        return `<div class="topbar-meta-line" style="color:${color}">${k}: ${v}/10</div>`;
+      }).join('');
     }
+
+    const constitutionHTML = (spec.constitution && spec.constitution.length) ? spec.constitution.map((line, i) => `
+      <div class="cr-card-line">
+        <span class="cr-card-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="cr-card-text">${line}</span>
+      </div>
+    `).join('') : '';
 
     main.innerHTML = `
       <div class="detail">
-        <div class="detail-header">
-          <div style="display:flex;align-items:baseline">
-            <span class="detail-name">${spec.name}</span>
-            <span class="detail-arch">${spec.arch}</span>
-            <span style="margin-left:16px;font-size:9px;color:#555">${scoreDetail(scores)}</span>
+        <div class="cr-main">
+          <div class="cr-card">
+            <div class="cr-card-header">
+              <div class="cr-card-title">${spec.name}</div>
+              <div class="cr-card-arch">${spec.arch}</div>
+            </div>
+            <div class="cr-card-body">
+              <div class="cr-card-label">THE CONSTITUTION</div>
+              ${constitutionHTML}
+            </div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            ${!isLC && breeding && breeding.partners.length > 0 ? `<button class="crossbreed-btn" onclick="openCrossbreed()">× CROSS-BREED</button>` : ''}
-            ${currentKey === 'wasp_nest' ? `<button class="style-btn" onclick="goDetail('lifecycle')">LIFECYCLE</button>` : ''}
-          </div>
+          <div class="cr-canvas-area"><div id="viewport"></div></div>
         </div>
-        <div class="style-bar" id="stylebar"></div>
-        ${isLC ? '' : `<div class="col-headers"><span style="color:#555">WHAT IT CAME FROM:</span><span style="color:#888">WHAT IT IS NOW:</span><span style="color:#555">WHAT IT WILL BECOME:</span></div>`}
-        <div class="triptych" id="triptych">
-          <div class="model-wrap" style="width:${isLC?'70%':'35%'}"><div id="viewport"></div></div>
-          <svg id="lines-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none"></svg>
-          <div class="rows" id="rows"></div>
-        </div>
-        <div class="divider"></div>
         <div class="bottom" id="bottom-section"></div>
       </div>
     `;
 
-    renderStyleBar();
-    renderRows(spec, isLC);
     renderBottom(spec, isLC);
   }
-}
-
-function renderStyleBar() {
-  const bar = document.getElementById('stylebar');
-  if (!bar) return;
-  bar.innerHTML = '';
-  // View
-  const vLabel = document.createElement('span'); vLabel.style.cssText='font-size:9px;letter-spacing:0.12em;color:#666;text-transform:uppercase'; vLabel.textContent='VIEW:'; bar.appendChild(vLabel);
-  [['constitutional','CONSTITUTIONAL'],['monochrome','MONOCHROME']].forEach(([k,label])=>{
-    const btn = document.createElement('button'); btn.className='style-btn'+(currentTheme===THEMES[k]?' active':''); btn.textContent=label;
-    btn.onclick=()=>{currentTheme=THEMES[k];if(currentKey)goDetail(currentKey);}; bar.appendChild(btn);
-  });
-  // Sep
-  const sep = document.createElement('span'); sep.style.cssText='width:1px;height:10px;background:#ddd;margin:0 6px'; bar.appendChild(sep);
-  // Mode
-  const mLabel = document.createElement('span'); mLabel.style.cssText='font-size:9px;letter-spacing:0.12em;color:#666;text-transform:uppercase'; mLabel.textContent='MODE:'; bar.appendChild(mLabel);
-  [['xray','X-RAY'],['ghosted','GHOSTED']].forEach(([k,label])=>{
-    const btn = document.createElement('button'); btn.className='style-btn'+(currentMode===k?' active':''); btn.textContent=label;
-    btn.onclick=()=>{currentMode=k;if(currentKey){loadModel(currentKey);}}; bar.appendChild(btn);
-  });
-  // Sep
-  const sep2 = document.createElement('span'); sep2.style.cssText='width:1px;height:10px;background:#ddd;margin:0 6px'; bar.appendChild(sep2);
-  // Section
-  const secBtn = document.createElement('button'); secBtn.className='style-btn'+(sectionEnabled?' active':''); secBtn.textContent='SECTION';
-  secBtn.onclick=()=>{sectionEnabled=!sectionEnabled;applySection();renderStyleBar();}; bar.appendChild(secBtn);
-  if (sectionEnabled) {
-    const slider = document.createElement('input'); slider.type='range'; slider.min='-8'; slider.max='8'; slider.step='0.1'; slider.value=clipPlane.constant;
-    slider.style.cssText='width:60px;height:3px;accent-color:#555;cursor:pointer;margin-left:4px';
-    slider.oninput=e=>{clipPlane.constant=parseFloat(e.target.value);}; bar.appendChild(slider);
-  }
-}
-
-function renderRows(spec, isLC) {
-  const rowsEl = document.getElementById('rows');
-  if (!rowsEl || isLC) return;
-  rowsEl.innerHTML = '';
-  spec.rows.forEach(row => {
-    const c = COLORS[row.cat];
-    const allVoid = row.right.every(t=>t.includes('?'));
-    const wrap = document.createElement('div'); wrap.className='row-wrap'; wrap.dataset.color=c; wrap.dataset.void=allVoid?'true':'false';
-    const label = document.createElement('div'); label.className='row-label'; label.style.color=c; label.textContent=row.label; wrap.appendChild(label);
-    const strip = document.createElement('div'); strip.className='strip';
-    const leftG = document.createElement('div'); leftG.className='panel-group panel-left'; leftG.style.border=`1px solid ${c}`;
-    row.left.forEach(t=>{const lines=t.split('\n');const cell=document.createElement('div');cell.className='cell';cell.style.border=`1px solid ${c}`;cell.innerHTML=`<div class="cell-title" style="color:${c}">${lines[0]}</div>${lines[1]?`<div class="cell-desc">${lines[1]}</div>`:''}`;leftG.appendChild(cell);});
-    strip.appendChild(leftG);
-    strip.appendChild(Object.assign(document.createElement('div'),{className:'spacer'}));
-    const rightG = document.createElement('div'); rightG.className='panel-group panel-right'; rightG.style.border=`1px solid ${allVoid?'#ddd':c}`;
-    row.right.forEach(t=>{const isEmpty=t.includes('?');const lines=t.split('\n');const cell=document.createElement('div');cell.className='cell';cell.style.border=`1px solid ${isEmpty?'#e0e0e0':c}`;cell.style.background=isEmpty?'#fafafb':'#fff';if(isEmpty){cell.innerHTML=`<div class="cell-title" style="color:#777">${lines[0]}</div><div class="cell-void">?</div>`;}else{cell.innerHTML=`<div class="cell-title" style="color:${c}">${lines[0]}</div>${lines[1]?`<div class="cell-desc">${lines[1]}</div>`:''}`;}rightG.appendChild(cell);});
-    strip.appendChild(rightG);
-    wrap.appendChild(strip); rowsEl.appendChild(wrap);
-  });
 }
 
 function renderBottom(spec, isLC) {
   const el = document.getElementById('bottom-section');
   if (!el) return;
   if (isLC) {
-    const stages=[{t:0,label:'RAW MATERIALS',color:'#E91E8C'},{t:0.12,label:'HARVEST',color:'#33DD33'},{t:0.22,label:'FIRST BUILD',color:'#33DD33'},{t:0.38,label:'GROWTH',color:'#E91E8C'},{t:0.55,label:'PEAK COLONY',color:'#FFB830'},{t:0.72,label:'DECLINE',color:'#FFB830'},{t:0.82,label:'ABANDON',color:'#888'},{t:0.88,label:'FALL',color:'#888'},{t:0.93,label:'DECOMPOSE',color:'#E91E8C'},{t:1.0,label:'RETURN',color:'#E91E8C'}];
-    el.innerHTML=`<div style="padding:4px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:10px;letter-spacing:0.2em;color:#555;font-weight:500">LIFESPAN:</span><span id="lc-stage" style="font-size:13px;letter-spacing:0.15em;font-weight:600"></span><span style="font-size:10px;letter-spacing:0.2em;color:#555;font-weight:500">DEATH:</span></div><input type="range" id="lc-scrubber" min="0" max="1" step="0.005" value="${lifecycleT}" style="width:100%;height:6px;cursor:pointer;accent-color:#555;margin:0"><div style="display:flex;justify-content:space-between;margin-top:3px">${stages.map(s=>`<span style="font-size:8px;letter-spacing:0.06em;color:${s.color};text-transform:uppercase;cursor:pointer" onclick="document.getElementById('lc-scrubber').value=${s.t};updateLifecycle(${s.t});document.getElementById('lc-stage').textContent='${s.label}';document.getElementById('lc-stage').style.color='${s.color}'">${s.label}</span>`).join('')}</div></div>`;
-    const scrubber=document.getElementById('lc-scrubber'),stageLabel=document.getElementById('lc-stage');
-    const currentStage=stages.reduce((best,s)=>lifecycleT>=s.t?s:best,stages[0]);
-    stageLabel.textContent=currentStage.label;stageLabel.style.color=currentStage.color;
-    scrubber.oninput=e=>{const v=parseFloat(e.target.value);updateLifecycle(v);const st=stages.reduce((best,s)=>v>=s.t?s:best,stages[0]);stageLabel.textContent=st.label;stageLabel.style.color=st.color;};
-  } else {
-    el.innerHTML=`<div class="bottom-grid"><div><div class="section-label">MANIFESTO:</div><div class="manifesto-text">${spec.manifesto}</div></div><div><div class="section-label">VALUE SYSTEM LEDGER:</div><div id="ledger"></div></div></div>`;
-    const ledgerEl=document.getElementById('ledger');
-    if(ledgerEl) spec.ledger.forEach(([k,v,hl])=>{const row=document.createElement('div');row.className='ledger-row'+(hl?' hl':'');row.innerHTML=`<div class="ledger-key">${k}</div><div class="ledger-val">${v}</div>`;ledgerEl.appendChild(row);});
+    const stages = spec.stages || [];
+    // Position labels at their actual t-value percentages (not evenly distributed)
+    // so the scrubber thumb position aligns with the stage label and animation.
+    const labelTransform = t => {
+      if (t < 0.04) return 'translateX(0)';
+      if (t > 0.96) return 'translateX(-100%)';
+      return 'translateX(-50%)';
+    };
+    const ticksHTML = stages.map(s =>
+      `<div style="position:absolute;left:${s.t * 100}%;width:1px;height:5px;background:#bbb;transform:translateX(-0.5px)"></div>`
+    ).join('');
+    const labelsHTML = stages.map(s =>
+      `<span data-t="${s.t}" data-label="${s.label}" data-color="${s.color}" class="stage-tick" style="position:absolute;left:${s.t * 100}%;transform:${labelTransform(s.t)};font-size:8px;letter-spacing:0.06em;color:${s.color};text-transform:uppercase;cursor:pointer;white-space:nowrap">${s.label}</span>`
+    ).join('');
+    el.innerHTML = `
+      <div style="padding:4px 0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:10px;letter-spacing:0.2em;color:#555;font-weight:500">LIFESPAN:</span>
+          <span id="lc-stage" style="font-size:13px;letter-spacing:0.15em;font-weight:600"></span>
+          <span style="font-size:10px;letter-spacing:0.2em;color:#555;font-weight:500">DEATH:</span>
+        </div>
+        <input type="range" id="lc-scrubber" min="0" max="1" step="0.005" value="${lifecycleT}" style="width:100%;height:6px;cursor:pointer;accent-color:#555;margin:0">
+        <div style="position:relative;height:6px;margin-top:1px">
+          ${ticksHTML}
+        </div>
+        <div style="position:relative;height:14px;margin-top:1px">
+          ${labelsHTML}
+        </div>
+      </div>
+    `;
+    const scrubber = document.getElementById('lc-scrubber');
+    const stageLabel = document.getElementById('lc-stage');
+    const currentStage = stages.reduce((best, s) => lifecycleT >= s.t ? s : best, stages[0]);
+    stageLabel.textContent = currentStage.label;
+    stageLabel.style.color = currentStage.color;
+
+    // Pause autoplay while user interacts with scrubber
+    scrubber.addEventListener('mousedown', () => { isScrubbing = true; });
+    scrubber.addEventListener('touchstart', () => { isScrubbing = true; });
+    window.addEventListener('mouseup', () => { isScrubbing = false; });
+    window.addEventListener('touchend', () => { isScrubbing = false; });
+
+    scrubber.oninput = e => {
+      const v = parseFloat(e.target.value);
+      lifecycleT = v;
+      updateLifecycle(v);
+      const st = stages.reduce((best, s) => v >= s.t ? s : best, stages[0]);
+      stageLabel.textContent = st.label;
+      stageLabel.style.color = st.color;
+    };
+
+    // Stage tick clicks jump to that stage
+    document.querySelectorAll('.stage-tick').forEach(el => {
+      el.onclick = () => {
+        const t = parseFloat(el.dataset.t);
+        lifecycleT = t;
+        scrubber.value = t;
+        updateLifecycle(t);
+        stageLabel.textContent = el.dataset.label;
+        stageLabel.style.color = el.dataset.color;
+      };
+    });
   }
 }
 
-// ═══ CROSSBREED MODAL ═══
-function renderCrossbreedModal() {
-  const el = document.getElementById('modal-content');
-  const breeding = BREEDING[currentKey];
-  if (!breeding) return;
-  let cards = '';
-  // Show available partners
-  breeding.partners.forEach(pk => {
-    const pSpec = SPECS[pk];
-    const resultKey = breeding.results[pk];
-    cards += `<div class="modal-card" onclick="closeCrossbreed();goDetail('${resultKey}')"><div class="modal-card-name">${pSpec.name}</div><div class="modal-card-sub">→ ${SPECS[resultKey].name}</div></div>`;
-  });
-  // Show grayed-out unavailable ones
-  const unavailable = BASE_SPECIMENS.filter(k => k !== currentKey && !breeding.partners.includes(k));
-  unavailable.forEach(k => {
-    if (k === 'wasp_nest' && !BASE_SPECIMENS.includes(currentKey)) return;
-    cards += `<div class="modal-card disabled"><div class="modal-card-name">${SPECS[k]?.name || k}</div><div class="modal-card-sub">COMING SOON</div></div>`;
-  });
-  el.innerHTML = `<div class="modal-title">CROSS-BREED ${SPECS[currentKey].name} WITH:</div><div class="modal-cards">${cards}</div><button class="modal-close" onclick="closeCrossbreed()">CANCEL</button>`;
-}
-
-// ═══ FAMILY TREE ═══
-function renderTree() {
-  const svg = document.getElementById('tree-svg');
-  if (!svg) return;
-  svg.innerHTML = '';
-  const ns = 'http://www.w3.org/2000/svg';
-
-  // Nodes
-  const nodes = {
-    wasp_nest: { x:400, y:60, label:'WASP NEST', score:VALUE_SCORES.wasp_nest },
-    h100: { x:200, y:60, label:'NVIDIA H100', score:VALUE_SCORES.h100 },
-    manhattan: { x:600, y:60, label:'MANHATTAN GRID', score:VALUE_SCORES.manhattan },
-    hybrid: { x:250, y:220, label:'H100 × WASP NEST', score:VALUE_SCORES.hybrid },
-    manhattan_hybrid: { x:550, y:220, label:'MANHATTAN × WASP NEST', score:VALUE_SCORES.manhattan_hybrid },
-    h100_manhattan: { x:400, y:220, label:'H100 × MANHATTAN', score:null },
-    convergence: { x:400, y:380, label:'SEASONAL DATA CENTER', score:VALUE_SCORES.convergence },
-  };
-
-  // Edges
-  const edges = [
-    { from:'h100', to:'hybrid', color:'#E91E8C', solid:true },
-    { from:'wasp_nest', to:'hybrid', color:'#33DD33', solid:true },
-    { from:'manhattan', to:'manhattan_hybrid', color:'#E91E8C', solid:true },
-    { from:'wasp_nest', to:'manhattan_hybrid', color:'#33DD33', solid:true },
-    { from:'h100', to:'h100_manhattan', color:'#ccc', solid:false },
-    { from:'manhattan', to:'h100_manhattan', color:'#ccc', solid:false },
-    { from:'hybrid', to:'convergence', color:'#E91E8C', solid:true },
-    { from:'manhattan_hybrid', to:'convergence', color:'#33DD33', solid:true },
-  ];
-
-  // Draw edges
-  edges.forEach(e => {
-    const f = nodes[e.from], t = nodes[e.to];
-    const line = document.createElementNS(ns, 'line');
-    line.setAttribute('x1', f.x); line.setAttribute('y1', f.y + 20);
-    line.setAttribute('x2', t.x); line.setAttribute('y2', t.y - 20);
-    line.setAttribute('stroke', e.color); line.setAttribute('stroke-width', e.solid ? '1.5' : '1');
-    if (!e.solid) line.setAttribute('stroke-dasharray', '4 3');
-    line.setAttribute('opacity', e.solid ? '0.5' : '0.25');
-    svg.appendChild(line);
-  });
-
-  // Draw nodes
-  Object.entries(nodes).forEach(([key, n]) => {
-    const exists = n.score !== null;
-    const g = document.createElementNS(ns, 'g');
-    g.style.cursor = exists ? 'pointer' : 'default';
-    if (exists) g.onclick = () => { toggleTree(); goDetail(key); };
-
-    // Box
-    const rect = document.createElementNS(ns, 'rect');
-    const w = 140, h = 36;
-    rect.setAttribute('x', n.x - w/2); rect.setAttribute('y', n.y - h/2);
-    rect.setAttribute('width', w); rect.setAttribute('height', h);
-    rect.setAttribute('fill', '#fff'); rect.setAttribute('stroke', exists ? '#1a1a1a' : '#ddd');
-    rect.setAttribute('stroke-width', '1');
-    if (!exists) rect.setAttribute('stroke-dasharray', '3 2');
-    g.appendChild(rect);
-
-    // Label
-    const text = document.createElementNS(ns, 'text');
-    text.setAttribute('x', n.x); text.setAttribute('y', n.y - 2);
-    text.setAttribute('text-anchor', 'middle'); text.setAttribute('font-family', "'Spline Sans Mono',monospace");
-    text.setAttribute('font-size', '7'); text.setAttribute('letter-spacing', '0.12em');
-    text.setAttribute('fill', exists ? '#1a1a1a' : '#ccc'); text.setAttribute('font-weight', '600');
-    text.textContent = n.label;
-    g.appendChild(text);
-
-    // Score
-    if (n.score) {
-      const total = Math.round((n.score.death+n.score.waste+n.score.labor+n.score.supply)/4*10)/10;
-      const scoreText = document.createElementNS(ns, 'text');
-      scoreText.setAttribute('x', n.x); scoreText.setAttribute('y', n.y + 11);
-      scoreText.setAttribute('text-anchor', 'middle'); scoreText.setAttribute('font-family', "'Spline Sans Mono',monospace");
-      scoreText.setAttribute('font-size', '6'); scoreText.setAttribute('letter-spacing', '0.1em');
-      scoreText.setAttribute('fill', total>6?'#33DD33':total>3?'#FFB830':'#E91E8C');
-      scoreText.textContent = `${total}/10`;
-      g.appendChild(scoreText);
-    } else {
-      const coming = document.createElementNS(ns, 'text');
-      coming.setAttribute('x', n.x); coming.setAttribute('y', n.y + 11);
-      coming.setAttribute('text-anchor', 'middle'); coming.setAttribute('font-family', "'Spline Sans Mono',monospace");
-      coming.setAttribute('font-size', '5.5'); coming.setAttribute('fill', '#ddd');
-      coming.textContent = 'COMING SOON';
-      g.appendChild(coming);
-    }
-
-    svg.appendChild(g);
-  });
-
-  // Generation labels
-  [['GENERATION 0', 40], ['GENERATION 1', 200], ['GENERATION 2', 360]].forEach(([label, y]) => {
-    const t = document.createElementNS(ns, 'text');
-    t.setAttribute('x', 30); t.setAttribute('y', y);
-    t.setAttribute('font-family', "'Spline Sans Mono',monospace"); t.setAttribute('font-size', '6');
-    t.setAttribute('fill', '#ddd'); t.setAttribute('letter-spacing', '0.1em');
-    t.textContent = label;
-    svg.appendChild(t);
-  });
-}
-
-// Make functions available globally
 window.goHome = goHome;
 window.goDetail = goDetail;
-window.toggleTree = toggleTree;
-window.openCrossbreed = openCrossbreed;
-window.closeCrossbreed = closeCrossbreed;
 window.updateLifecycle = updateLifecycle;
 
-// ═══ INIT ═══
 window.addEventListener('load', () => {
   render();
-  window.addEventListener('resize', () => { onResize(); });
+  // Refit the canvas on viewport changes — including orientation flips on mobile,
+  // which sometimes fire orientationchange before the layout has settled, so we
+  // also call onResize on a delay just in case.
+  const refit = () => { onResize(); setTimeout(onResize, 120); };
+  window.addEventListener('resize', refit);
+  window.addEventListener('orientationchange', refit);
 });
 </script>
 </body>
